@@ -1,1 +1,1 @@
-# oris-semester-work-1
+# religious-studying
