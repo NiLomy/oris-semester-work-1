@@ -24,4 +24,13 @@
         <servlet-name>freemarker</servlet-name>
         <url-pattern>*.ftl</url-pattern>
     </servlet-mapping>
+
+    <error-page>
+        <location>/handle</location>
+    </error-page>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/view/errors/pageNotFound.ftl</location>
+    </error-page>
 </web-app>
