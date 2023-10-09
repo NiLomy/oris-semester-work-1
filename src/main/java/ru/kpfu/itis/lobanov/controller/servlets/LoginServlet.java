@@ -37,8 +37,11 @@ public class LoginServlet extends HttpServlet {
 
         UserDto userDto = userService.get(login, password);
         if (userDto != null) {
+            String email = userService.getEmail(login, password);
             HttpSession httpSession = req.getSession();
             httpSession.setAttribute("userName", login);
+            httpSession.setAttribute("email", email);
+            httpSession.setAttribute("currentUser", userDto);
             if (isRemembered != null && isRemembered.equals("on")) {
                 userService.auth(userDto, req, resp);
             }

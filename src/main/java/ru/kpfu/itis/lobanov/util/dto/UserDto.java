@@ -5,10 +5,17 @@ public class UserDto {
     private String lastName;
     private String login;
     private String email;
+    private String password;
 
     public UserDto(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public UserDto(String login, String email, String password) {
+        this.login = login;
+        this.email = email;
+        this.password = password;
     }
 
     public UserDto(String firstName, String lastName, String login, String email) {
@@ -16,6 +23,14 @@ public class UserDto {
         this.lastName = lastName;
         this.login = login;
         this.email = email;
+    }
+
+    public UserDto(String name, String lastname, String login, String email, String password) {
+        this.firstName = name;
+        this.lastName = lastname;
+        this.login = login;
+        this.email = email;
+        this.password = password;
     }
 
     public String getFirstName() {
@@ -48,5 +63,13 @@ public class UserDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -37,26 +37,28 @@
 </header>
 
 <#include "base.ftl">
-<#macro title>Home</#macro>
+<#macro title>Profile</#macro>
 
 <#macro content1>
     <div style="font-size:150%; text-align:center">
-        <b>AAAaaaa</b>
+        <b>This is your profile</b>
     </div>
 </#macro>
 <#macro content2>
-    <div style="font-size:110%; text-align: center">
-        <form action="login" method="get">
-            <button type="submit">
-                Go to register page
-            </button>
-        </form>
+    <div style="font-size:110%; text-align: center" align="center">
+        ${currentUser.firstName} ${currentUser.lastName}
+        <table style="align-content: center; align-items: center; text-align: center">
+            <tr>
+                <td>Login: </td>
+                <td>${currentUser.login}</td>
+            </tr>
+            <tr>
+                <td>Email: </td>
+                <td>${currentUser.email}</td>
+            </tr>
+        </table>
         <br>
-        <form action="profile" method="get">
-            <button type="submit">
-                Go to profile page
-            </button>
-        </form>
+        <a href="${pageContext}/edit_profile">Edit profile</a>
     </div>
 </#macro>
 </html>

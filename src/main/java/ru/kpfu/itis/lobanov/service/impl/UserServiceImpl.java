@@ -6,6 +6,7 @@ import ru.kpfu.itis.lobanov.model.entity.User;
 import ru.kpfu.itis.lobanov.service.UserService;
 import ru.kpfu.itis.lobanov.util.PasswordUtil;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
+import ru.kpfu.itis.lobanov.util.exception.DbException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,7 @@ public class UserServiceImpl implements UserService {
     public UserDto get(String login, String password) {
         User user = dao.get(login, password);
         if (user == null) return null;
-        return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail());
+        return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getPassword());
     }
 
     @Override
@@ -39,14 +40,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isEmailUnique(String email) {
-        return getAll().stream().noneMatch(userDto -> userDto.getEmail().equals(email));
+    public String getEmail(String login, String password) {
+        return dao.getEmail(login, password);
     }
 
     @Override
     public void save(User user) {
         user.setPassword(PasswordUtil.encrypt(user.getPassword()));
         dao.save(user);
+    }
+
+    @Override
+    public boolean update(User user, String oldLogin) {
+        try {
+            dao.update(user, oldLogin);
+            return true;
+        } catch (DbException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isEmailUnique(String email) {
+        return getAll().stream().noneMatch(userDto -> userDto.getEmail().equals(email));
     }
 
     @Override

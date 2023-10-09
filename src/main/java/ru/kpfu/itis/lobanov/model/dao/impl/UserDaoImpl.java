@@ -42,21 +42,6 @@ public class UserDaoImpl implements Dao<User> {
         }
     }
 
-    @Override
-    public User get(String login, String password, String email) {
-        try {
-            String sql = "SELECT * from users where login = ? and password = ? and email = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, login);
-            preparedStatement.setString(2, password);
-            preparedStatement.setString(3, email);
-
-            return getUserByStatement(preparedStatement);
-        } catch (SQLException e) {
-            throw new DbException("Can't get user from DB.", e);
-        }
-    }
-
     private User getUserByStatement(PreparedStatement preparedStatement) throws SQLException {
         ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -104,6 +89,26 @@ public class UserDaoImpl implements Dao<User> {
     }
 
     @Override
+    public String getEmail(String login, String password) {
+        try {
+            String sql = "SELECT email from users where login = ? and password = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, login);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet != null) {
+                if (resultSet.next()) {
+                    return resultSet.getString("email");
+                }
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new DbException("Can't get user from DB.", e);
+        }
+    }
+
+    @Override
     public void save(User user) {
         String sql = "insert into users (name, lastname, email, login, password) values (?, ?, ?, ?, ?);";
         try {
@@ -113,6 +118,23 @@ public class UserDaoImpl implements Dao<User> {
             preparedStatement.setString(3, user.getEmail());
             preparedStatement.setString(4, user.getLogin());
             preparedStatement.setString(5, user.getPassword());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't save user into DB.", e);
+        }
+    }
+
+    @Override
+    public void update(User user, String oldLogin) {
+        String sql = "update users set name=?, lastname=?, email=?, login=? where login=?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getLastname());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, user.getLogin());
+            preparedStatement.setString(5, oldLogin);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

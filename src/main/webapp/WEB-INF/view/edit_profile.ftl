@@ -37,25 +37,35 @@
 </header>
 
 <#include "base.ftl">
-<#macro title>Home</#macro>
+<#macro title>Edit Profile</#macro>
 
 <#macro content1>
     <div style="font-size:150%; text-align:center">
-        <b>AAAaaaa</b>
+        <b>Change your data</b>
     </div>
 </#macro>
 <#macro content2>
     <div style="font-size:110%; text-align: center">
-        <form action="login" method="get">
-            <button type="submit">
-                Go to register page
-            </button>
-        </form>
-        <br>
-        <form action="profile" method="get">
-            <button type="submit">
-                Go to profile page
-            </button>
+        <form action="edit_profile" method="post" style="text-align: center">
+            <table style="align-content: center; align-items: center; text-align: center">
+                <tr>
+                    <td>Login: </td>
+                    <td><input type="text" name="nickName" maxlength="60" value="${currentUser.login}"></td>
+                </tr>
+                <tr>
+                    <td>Name: </td>
+                    <td><input type="text" name="name" maxlength="60" value="${currentUser.firstName}"></td>
+                </tr>
+                <tr>
+                    <td>Lastname: </td>
+                    <td><input type="text" name="lastname" maxlength="60" value="${currentUser.lastName}"></td>
+                </tr>
+                <tr>
+                    <td>Email: </td>
+                    <td><input type="text" name="email" maxlength="60" value="${currentUser.email}"></td>
+                </tr>
+            </table>
+            <input type="submit" value="Save changes">
         </form>
     </div>
 </#macro>

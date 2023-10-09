@@ -11,8 +11,10 @@ public interface UserService {
     UserDto get(int id);
     UserDto get(String login, String password);
     List<UserDto> getAll();
-    boolean isEmailUnique(String email);
+    String getEmail(String login, String password);
     void save(User user);
+    boolean update(User user, String oldLogin);
+    boolean isEmailUnique(String email);
     void auth(UserDto user, HttpServletRequest req, HttpServletResponse resp);
     boolean isAuthorized(HttpServletRequest req, HttpServletResponse resp);
 }

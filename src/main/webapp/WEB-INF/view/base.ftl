@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title><@title></@title></title>
     
-    <script src="${pageContext}/js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     
-<#--    <link rel="stylesheet" href="${pageContext}/styles/bootstrap.min.css">-->
-    <link rel="stylesheet" href="${pageContext}/styles/main.css">
+    <link rel="stylesheet" href="styles/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
 <#--<body>-->

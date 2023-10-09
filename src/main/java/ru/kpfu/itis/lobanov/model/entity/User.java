@@ -10,6 +10,14 @@ public class User {
     private String login;
     private String password;
 
+    public User(String name, String lastname, String email, String login) {
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+        this.login = login;
+        this.password = null;
+    }
+
     public User(String name, String lastname, String email, String login, String password) {
         this.name = name;
         this.lastname = lastname;
