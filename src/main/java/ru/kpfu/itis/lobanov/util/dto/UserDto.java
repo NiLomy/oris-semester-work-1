@@ -6,16 +6,11 @@ public class UserDto {
     private String login;
     private String email;
     private String password;
+    private String imageUrl;
 
     public UserDto(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-    }
-
-    public UserDto(String login, String email, String password) {
-        this.login = login;
-        this.email = email;
-        this.password = password;
     }
 
     public UserDto(String firstName, String lastName, String login, String email) {
@@ -25,12 +20,21 @@ public class UserDto {
         this.email = email;
     }
 
-    public UserDto(String name, String lastname, String login, String email, String password) {
-        this.firstName = name;
-        this.lastName = lastname;
+    public UserDto(String firstName, String lastName, String login, String email, String imageUrl) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.login = login;
+        this.email = email;
+        this.imageUrl = imageUrl;
+    }
+
+    public UserDto(String firstName, String lastName, String login, String email, String password, String imageUrl) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.login = login;
         this.email = email;
         this.password = password;
+        this.imageUrl = imageUrl;
     }
 
     public String getFirstName() {
@@ -71,5 +75,13 @@ public class UserDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

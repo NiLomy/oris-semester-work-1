@@ -49,34 +49,35 @@
 
 <#include "base.ftl">
 
-<#macro scripts></#macro>
+<#macro scripts>
+</#macro>
 <#macro styles></#macro>
 
-<#macro title>Profile</#macro>
+<#macro title>Posts</#macro>
 
 <#macro content1>
     <div style="font-size:150%; text-align:center">
-        <b>This is your profile</b>
+        <b>Posts</b>
     </div>
 </#macro>
 <#macro content2>
-    <div style="font-size:110%; text-align: center" align="center">
-        ${currentUser.firstName} ${currentUser.lastName}
-        <br>
-        <img src="${currentUser.imageUrl}" alt="Profile Image" style="border-radius: 50%" width="150px" height="150px">
-        <br>
-        <table style="align-content: center; align-items: center; text-align: center" align="center">
-            <tr>
-                <td>Login: </td>
-                <td>${currentUser.login}</td>
-            </tr>
-            <tr>
-                <td>Email: </td>
-                <td>${currentUser.email}</td>
-            </tr>
-        </table>
-        <br>
-        <a class="btn btn-primary" href="${pageContext}/edit_profile">Edit profile</a>
+    <a class="btn btn-primary" href="${pageContext}/create-post">Add post</a>
+    <br>
+    <br>
+    <div style="font-size:110%; text-align: center">
+        <#if posts? has_content>
+            <#list posts as p>
+                ${p.name}
+                <br>
+                ${p.category}
+                <br>
+                ${p.likes}
+                <br>
+                <a href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}">Go to page</a>
+                <br>
+                <br>
+            </#list>
+        </#if>
     </div>
 </#macro>
 </html>

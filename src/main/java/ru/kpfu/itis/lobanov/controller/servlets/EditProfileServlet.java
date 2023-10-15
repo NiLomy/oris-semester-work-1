@@ -1,7 +1,7 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
 import ru.kpfu.itis.lobanov.model.entity.User;
-import ru.kpfu.itis.lobanov.service.impl.UserServiceImpl;
+import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
 import javax.servlet.ServletConfig;
@@ -30,7 +30,7 @@ public class EditProfileServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String newLogin = req.getParameter("nickName");
+        String newLogin = req.getParameter("nickname");
         String name = req.getParameter("name");
         String lastName = req.getParameter("lastname");
         String email = req.getParameter("email");
@@ -38,11 +38,14 @@ public class EditProfileServlet extends HttpServlet {
         HttpSession httpSession = req.getSession();
         String oldLogin = (String) httpSession.getAttribute("userName");
         User user = new User(name, lastName, email, newLogin);
-        UserDto userDto = new UserDto(name, lastName, newLogin, email);
 
         if (userService.update(user, oldLogin)) {
+            UserDto userDto = userService.get(newLogin);
+            httpSession.setAttribute("userName", userDto.getLogin());
             httpSession.setAttribute("currentUser", userDto);
-            resp.sendRedirect(getServletContext().getContextPath() + "/profile");
+            resp.setContentType("text/plain");
+            resp.getWriter().write("Your data was successfully changed!");
+//            resp.sendRedirect(getServletContext().getContextPath() + "/profile");
             // makeToast
         } else {
             // makeToast

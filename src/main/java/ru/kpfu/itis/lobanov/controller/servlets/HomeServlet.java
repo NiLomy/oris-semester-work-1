@@ -1,9 +1,5 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
-import ru.kpfu.itis.lobanov.service.UserService;
-import ru.kpfu.itis.lobanov.service.impl.UserServiceImpl;
-
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;

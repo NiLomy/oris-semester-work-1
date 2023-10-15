@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajax</title>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <link rel="stylesheet" href="WEB-INF/view/styles/bootstrap.min.css">
+    <script>
+        $(document).on(
+            "click", "#ajax-button", function () {
+                console.log("Debug");
+                alert("Alert test");
+                $.get(`/religious-studying/ajax/hello`, function (response) {
+                    $("#ajax-response").text(response);
+                })
+            }
+        )
+    </script>
+</head>
+<body>
+<div id="ajax-response">
+</div>
+<form>
+    <input type="button" id="ajax-button" value="Get message">
+</form>
+</body>
+</html>

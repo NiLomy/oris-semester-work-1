@@ -1,4 +1,4 @@
-package ru.kpfu.itis.lobanov.service;
+package ru.kpfu.itis.lobanov.model.service;
 
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 

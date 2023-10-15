@@ -1,6 +1,6 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
-import ru.kpfu.itis.lobanov.service.impl.UserServiceImpl;
+import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
 import ru.kpfu.itis.lobanov.util.PasswordUtil;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
@@ -31,12 +31,14 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String login = req.getParameter("login");
-//        String password = PasswordUtil.encrypt(req.getParameter("password"));
-        String password = req.getParameter("password");
+        String password = PasswordUtil.encrypt(req.getParameter("password"));
+//        String password = req.getParameter("password");
         String isRemembered = req.getParameter("remember_me");
 
         UserDto userDto = userService.get(login, password);
-        if (userDto != null) {
+        if (userDto == null) {
+            resp.sendRedirect(getServletContext().getContextPath() + "/login");
+        } else {
             String email = userService.getEmail(login, password);
             HttpSession httpSession = req.getSession();
             httpSession.setAttribute("userName", login);
@@ -46,8 +48,6 @@ public class LoginServlet extends HttpServlet {
                 userService.auth(userDto, req, resp);
             }
             resp.sendRedirect(getServletContext().getContextPath() + "/home");
-        } else {
-            resp.sendRedirect(getServletContext().getContextPath() + "/login");
         }
     }
 }

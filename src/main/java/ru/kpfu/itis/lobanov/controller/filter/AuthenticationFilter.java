@@ -1,6 +1,6 @@
 package ru.kpfu.itis.lobanov.controller.filter;
 
-import ru.kpfu.itis.lobanov.service.impl.UserServiceImpl;
+import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -23,9 +23,9 @@ public class AuthenticationFilter extends HttpFilter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 
         String uri = httpServletRequest.getRequestURI();
-        HttpSession httpSession = httpServletRequest.getSession(false);
+        HttpSession httpSession = httpServletRequest.getSession(false); // && httpSession == null
         boolean isAuth = userService.isAuthorized(httpServletRequest, httpServletResponse);
-        if (!isAuth && httpSession == null && !uri.contains("registration") && !uri.contains("login")) {
+        if (!isAuth && httpSession == null && !uri.contains("registration") && !uri.contains("login") && !uri.contains("home")) {
             httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + "/login");
         } else {
             filterChain.doFilter(servletRequest, servletResponse);

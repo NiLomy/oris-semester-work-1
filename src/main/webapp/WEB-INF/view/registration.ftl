@@ -1,6 +1,9 @@
 <html lang="en">
 <#include "base.ftl">
 
+<#macro scripts></#macro>
+<#macro styles></#macro>
+
 <#macro title>Registration</#macro>
 
 <#macro content1>

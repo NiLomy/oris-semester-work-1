@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title><@title></@title></title>
-    
+
+    <@scripts></@scripts>
+    <@styles></@styles>
     <script src="js/bootstrap.min.js"></script>
-    
     <link rel="stylesheet" href="styles/bootstrap.min.css">
     <link rel="stylesheet" href="styles/main.css">
 </head>
@@ -26,7 +27,7 @@
         Religious studying
     </div>
 </div>
-
+<#--заглушку macro для скриптов сделать-->
 <div class="content">
     <div class="content1"><@content1></@content1></div>
     <br>

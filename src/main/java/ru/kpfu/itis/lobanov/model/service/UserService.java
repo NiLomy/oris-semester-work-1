@@ -1,4 +1,4 @@
-package ru.kpfu.itis.lobanov.service;
+package ru.kpfu.itis.lobanov.model.service;
 
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 import ru.kpfu.itis.lobanov.model.entity.User;
@@ -9,12 +9,16 @@ import java.util.List;
 
 public interface UserService {
     UserDto get(int id);
+    UserDto get(String nickname);
     UserDto get(String login, String password);
     List<UserDto> getAll();
     String getEmail(String login, String password);
     void save(User user);
     boolean update(User user, String oldLogin);
+    boolean updateImageUrl(String nickName, String imageUrl);
+    boolean updatePassword(String nickname, String password);
     boolean isEmailUnique(String email);
+    boolean isPasswordMatches(String nickname, String password);
     void auth(UserDto user, HttpServletRequest req, HttpServletResponse resp);
     boolean isAuthorized(HttpServletRequest req, HttpServletResponse resp);
 }

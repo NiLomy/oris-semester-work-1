@@ -1,6 +1,6 @@
 package ru.kpfu.itis.lobanov.model.dao.impl;
 
-import ru.kpfu.itis.lobanov.model.dao.Dao;
+import ru.kpfu.itis.lobanov.model.dao.UserDao;
 import ru.kpfu.itis.lobanov.model.entity.User;
 import ru.kpfu.itis.lobanov.util.DatabaseConnectionProvider;
 import ru.kpfu.itis.lobanov.util.exception.DbException;
@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoImpl implements Dao<User> {
+public class UserDaoImpl implements UserDao<User> {
 
     private final Connection connection = DatabaseConnectionProvider.getConnection();
 
@@ -20,6 +20,20 @@ public class UserDaoImpl implements Dao<User> {
             String sql = "SELECT * from users where id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
+
+            return getUserByStatement(preparedStatement);
+        } catch (SQLException e) {
+            throw new DbException("Can't get user from DB.", e);
+        }
+    }
+
+    @Override
+    public User get(String nickname) {
+        try {
+            //Statement statement = connection.createStatement();
+            String sql = "SELECT * from users where login = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, nickname);
 
             return getUserByStatement(preparedStatement);
         } catch (SQLException e) {
@@ -53,7 +67,8 @@ public class UserDaoImpl implements Dao<User> {
                         resultSet.getString("lastname"),
                         resultSet.getString("email"),
                         resultSet.getString("login"),
-                        resultSet.getString("password")
+                        resultSet.getString("password"),
+                        resultSet.getString("image_url")
                 );
             }
         }
@@ -77,7 +92,8 @@ public class UserDaoImpl implements Dao<User> {
                                     resultSet.getString("lastname"),
                                     resultSet.getString("email"),
                                     resultSet.getString("login"),
-                                    resultSet.getString("password")
+                                    resultSet.getString("password"),
+                                    resultSet.getString("image_url")
                             )
                     );
                 }
@@ -135,6 +151,34 @@ public class UserDaoImpl implements Dao<User> {
             preparedStatement.setString(3, user.getEmail());
             preparedStatement.setString(4, user.getLogin());
             preparedStatement.setString(5, oldLogin);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't save user into DB.", e);
+        }
+    }
+
+    @Override
+    public void updateImageUrl(String nickName, String imageUrl) {
+        String sql = "update users set image_url=? where login=?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, imageUrl);
+            preparedStatement.setString(2, nickName);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't save user into DB.", e);
+        }
+    }
+
+    @Override
+    public void updatePassword(String nickName, String password) {
+        String sql = "update users set password=? where login=?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, password);
+            preparedStatement.setString(2, nickName);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

@@ -9,6 +9,7 @@ public class User {
     private String email;
     private String login;
     private String password;
+    private String imageUrl;
 
     public User(String name, String lastname, String email, String login) {
         this.name = name;
@@ -33,6 +34,16 @@ public class User {
         this.email = email;
         this.login = login;
         this.password = password;
+    }
+
+    public User(int id, String name, String lastname, String email, String login, String password, String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+        this.login = login;
+        this.password = password;
+        this.imageUrl = imageUrl;
     }
 
     @Override
@@ -107,5 +118,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

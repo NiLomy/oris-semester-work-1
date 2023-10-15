@@ -1,7 +1,7 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
 import ru.kpfu.itis.lobanov.model.entity.User;
-import ru.kpfu.itis.lobanov.service.impl.UserServiceImpl;
+import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
 import javax.servlet.ServletConfig;
