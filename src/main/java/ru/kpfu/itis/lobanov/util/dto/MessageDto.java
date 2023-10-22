@@ -3,18 +3,39 @@ package ru.kpfu.itis.lobanov.util.dto;
 import java.sql.Date;
 
 public class MessageDto {
+    private int id;
     private String author;
     private String content;
     private String post;
     private Date date;
     private int likes;
+    private String authorImgUrl;
 
-    public MessageDto(String author, String content, String post, Date date, int likes) {
+    public MessageDto(String author, String content, String post, Date date, int likes, String authorImgUrl) {
         this.author = author;
         this.content = content;
         this.post = post;
         this.date = date;
         this.likes = likes;
+        this.authorImgUrl = authorImgUrl;
+    }
+
+    public MessageDto(int id, String author, String content, String post, Date date, int likes, String authorImgUrl) {
+        this.id = id;
+        this.author = author;
+        this.content = content;
+        this.post = post;
+        this.date = date;
+        this.likes = likes;
+        this.authorImgUrl = authorImgUrl;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getAuthor() {
@@ -55,5 +76,13 @@ public class MessageDto {
 
     public void setLikes(int likes) {
         this.likes = likes;
+    }
+
+    public String getAuthorImgUrl() {
+        return authorImgUrl;
+    }
+
+    public void setAuthorImgUrl(String authorImgUrl) {
+        this.authorImgUrl = authorImgUrl;
     }
 }

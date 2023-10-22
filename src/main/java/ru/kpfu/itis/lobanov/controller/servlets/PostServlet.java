@@ -1,8 +1,13 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
 import com.google.gson.Gson;
+import javafx.geometry.Pos;
+import ru.kpfu.itis.lobanov.model.dao.impl.UserDaoImpl;
 import ru.kpfu.itis.lobanov.model.entity.Message;
+import ru.kpfu.itis.lobanov.model.entity.MessageLike;
 import ru.kpfu.itis.lobanov.model.entity.PostLike;
+import ru.kpfu.itis.lobanov.model.entity.User;
+import ru.kpfu.itis.lobanov.model.service.impl.MessageLikeServiceImpl;
 import ru.kpfu.itis.lobanov.model.service.impl.MessageServiceImpl;
 import ru.kpfu.itis.lobanov.model.service.impl.PostLikeServiceImpl;
 import ru.kpfu.itis.lobanov.model.service.impl.PostServiceImpl;
@@ -27,6 +32,7 @@ public class PostServlet extends HttpServlet {
     private PostServiceImpl postService;
     private MessageServiceImpl messageService;
     private PostLikeServiceImpl postLikeService;
+    private MessageLikeServiceImpl messageLikeService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -34,6 +40,7 @@ public class PostServlet extends HttpServlet {
         postService = (PostServiceImpl) getServletContext().getAttribute("postService");
         messageService = (MessageServiceImpl) getServletContext().getAttribute("messageService");
         postLikeService = (PostLikeServiceImpl) getServletContext().getAttribute("postLikeService");
+        messageLikeService = (MessageLikeServiceImpl) getServletContext().getAttribute("messageLikeService");
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -43,8 +50,14 @@ public class PostServlet extends HttpServlet {
 
         List<MessageDto> messages = messageService.getAllFromPost(postName);
         req.setAttribute("messages", messages);
-
         HttpSession httpSession = req.getSession();
+        UserDto currentUser = (UserDto) httpSession.getAttribute("currentUser");
+
+        List<PostDto> posts = postService.getAllFavouriteFromUser(currentUser.getLogin());
+        boolean isFavourite = posts.stream().anyMatch(post -> post.getName().equals(postName));
+
+        if (isFavourite) req.setAttribute("isFavourite", true);
+
         httpSession.setAttribute("currentPost", postDto);
 
         req.getRequestDispatcher("WEB-INF/view/post.ftl").forward(req, resp);
@@ -56,6 +69,9 @@ public class PostServlet extends HttpServlet {
 
         if (action.equals("sendMessage")) sendMessage(req, resp);
         if (action.equals("pressLike")) pressLike(req, resp);
+        if (action.equals("pressMessageLike")) pressMessageLike(req, resp);
+        if (action.equals("pressFavourite")) pressFavourite(req, resp);
+        if (action.equals("pressUnfavourite")) pressUnfavourite(req, resp);
     }
 
     private void sendMessage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -70,12 +86,13 @@ public class PostServlet extends HttpServlet {
             HttpSession httpSession = req.getSession();
             PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
             UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
+            UserDaoImpl userDao = new UserDaoImpl();
+            User user = userDao.get(userDto.getLogin());
+
             messageService.save(new Message(
-                    userDto.getLogin(), newMessage, postDto.getName(), date, 0
+                    user.getId(), newMessage, postDto.getName(), date, 0
             ));
-            MessageDto messageDto = new MessageDto(
-                    userDto.getLogin(), newMessage, postDto.getName(), date, 0
-            );
+            MessageDto messageDto = messageService.get(user.getLogin(), newMessage, postDto.getName(), date, 0);
             resp.setContentType("application/json");
             String json = new Gson().toJson(messageDto);
             json = json.replace("content", "messageContent");
@@ -97,8 +114,48 @@ public class PostServlet extends HttpServlet {
             likes++;
         }
         postService.updateLikes(postDto.getName(), likes);
+        postDto.setLikes(likes);
+        httpSession.setAttribute("currentPost", postDto);
 
         resp.setContentType("text/plain");
         resp.getWriter().write(String.valueOf(likes));
+    }
+
+    private void pressMessageLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int messageId = Integer.parseInt(req.getParameter("messageId"));
+        MessageDto message = messageService.get(messageId);
+
+        HttpSession httpSession = req.getSession();
+        UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
+        int likes = message.getLikes();
+
+        if (messageLikeService.isSet(userDto.getLogin(), messageId)) {
+            messageLikeService.remove(new MessageLike(userDto.getLogin(), messageId));
+            likes--;
+        } else {
+            messageLikeService.save(new MessageLike(userDto.getLogin(), messageId));
+            likes++;
+        }
+        messageService.updateLikes(messageId, likes);
+        message.setLikes(likes);
+
+        resp.setContentType("text/plain");
+        resp.getWriter().write(String.valueOf(likes));
+    }
+
+    private void pressFavourite(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession httpSession = req.getSession();
+        PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
+        UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
+
+        postService.saveToFavourites(userDto.getLogin(), postDto.getName());
+    }
+
+    private void pressUnfavourite(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession httpSession = req.getSession();
+        PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
+        UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
+
+        postService.removeFromFavourites(userDto.getLogin(), postDto.getName());
     }
 }

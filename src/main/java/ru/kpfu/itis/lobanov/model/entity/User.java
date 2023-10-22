@@ -10,6 +10,7 @@ public class User {
     private String login;
     private String password;
     private String imageUrl;
+    private String aboutMe;
 
     public User(String name, String lastname, String email, String login) {
         this.name = name;
@@ -19,24 +20,34 @@ public class User {
         this.password = null;
     }
 
-    public User(String name, String lastname, String email, String login, String password) {
+    public User(String name, String lastname, String email, String login, String aboutMe) {
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
+        this.login = login;
+        this.aboutMe = aboutMe;
+    }
+
+    public User(String name, String lastname, String email, String login, String password, String aboutMe) {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
         this.login = login;
         this.password = password;
+        this.aboutMe = aboutMe;
     }
 
-    public User(int id, String name, String lastname, String email, String login, String password) {
-        this.id = id;
+    public User(String name, String lastname, String email, String login, String password, String imageUrl, String aboutMe) {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
         this.login = login;
         this.password = password;
+        this.imageUrl = imageUrl;
+        this.aboutMe = aboutMe;
     }
 
-    public User(int id, String name, String lastname, String email, String login, String password, String imageUrl) {
+    public User(int id, String name, String lastname, String email, String login, String password, String imageUrl, String aboutMe) {
         this.id = id;
         this.name = name;
         this.lastname = lastname;
@@ -44,6 +55,7 @@ public class User {
         this.login = login;
         this.password = password;
         this.imageUrl = imageUrl;
+        this.aboutMe = aboutMe;
     }
 
     @Override
@@ -126,5 +138,13 @@ public class User {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getAboutMe() {
+        return aboutMe;
+    }
+
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe;
     }
 }

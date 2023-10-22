@@ -90,12 +90,10 @@
 <#macro styles>
 </#macro>
 
-<#macro title>Posts</#macro>
+<#macro title>Favourite</#macro>
 
 <#macro content1>
-    <div style="font-size:150%; text-align:center">
-        <b>Posts</b>
-    </div>
+    <b>Favourite posts</b>
 </#macro>
 <#macro content2>
     <div class="d-flex justify-content-between">
@@ -117,22 +115,13 @@
             </div>
         </div>
         <div class="col-2 mt-3">
-            <#if currentUser? has_content>
-                <a class="btn btn-primary me-1 flex-grow-1" href="${pageContext}/create-post">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Create new post
-                </a>
-            <#else>
-                <a id="anauth-create-post" class="btn btn-primary me-1 flex-grow-1 anauth-create-post">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Create new post
-                </a>
-            </#if>
         </div>
     </div>
     <br>
     <br>
     <br>
     <div style="font-size:110%; text-align: center">
-        <#if posts? has_content>
+        <#if favouritePosts? has_content>
             <section class="gradient-custom all-posts">
                 <div id="nothing-found" style="display: none">
                     <p >No results found</p>
@@ -140,11 +129,11 @@
                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Create new post about this
                     </a>
                 </div>
-                <#list posts as p>
+                <#list favouritePosts as p>
                     <div class="container my-1 py-1 a-post">
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-12 col-lg-10 col-xl-8">
-                                <div class="card" href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}">
+                                <div class="card">
                                     <div class="card-body p-4">
                                         <div class="d-flex flex-start">
                                             <img class="rounded-circle shadow-1-strong me-3"

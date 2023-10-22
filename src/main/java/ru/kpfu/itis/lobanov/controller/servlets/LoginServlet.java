@@ -30,22 +30,19 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String login = req.getParameter("login");
+        String login = req.getParameter("nickname");
         String password = PasswordUtil.encrypt(req.getParameter("password"));
-//        String password = req.getParameter("password");
-        String isRemembered = req.getParameter("remember_me");
+        String isRemembered = req.getParameter("rememberMe");
 
         UserDto userDto = userService.get(login, password);
         if (userDto == null) {
-            resp.sendRedirect(getServletContext().getContextPath() + "/login");
+            resp.setContentType("text/plain");
+            resp.getWriter().write("invalidInput");
         } else {
-            String email = userService.getEmail(login, password);
             HttpSession httpSession = req.getSession();
-            httpSession.setAttribute("userName", login);
-            httpSession.setAttribute("email", email);
             httpSession.setAttribute("currentUser", userDto);
             if (isRemembered != null && isRemembered.equals("on")) {
-                userService.auth(userDto, req, resp);
+                userService.remember(userDto, req, resp);
             }
             resp.sendRedirect(getServletContext().getContextPath() + "/home");
         }

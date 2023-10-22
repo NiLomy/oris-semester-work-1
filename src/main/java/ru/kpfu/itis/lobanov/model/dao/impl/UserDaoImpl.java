@@ -10,13 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao<User> {
-
     private final Connection connection = DatabaseConnectionProvider.getConnection();
 
     @Override
     public User get(int id) {
         try {
-            //Statement statement = connection.createStatement();
             String sql = "SELECT * from users where id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
@@ -68,7 +66,8 @@ public class UserDaoImpl implements UserDao<User> {
                         resultSet.getString("email"),
                         resultSet.getString("login"),
                         resultSet.getString("password"),
-                        resultSet.getString("image_url")
+                        resultSet.getString("image_url"),
+                        resultSet.getString("about_me")
                 );
             }
         }
@@ -93,7 +92,8 @@ public class UserDaoImpl implements UserDao<User> {
                                     resultSet.getString("email"),
                                     resultSet.getString("login"),
                                     resultSet.getString("password"),
-                                    resultSet.getString("image_url")
+                                    resultSet.getString("image_url"),
+                                    resultSet.getString("about_me")
                             )
                     );
                 }
@@ -143,14 +143,16 @@ public class UserDaoImpl implements UserDao<User> {
 
     @Override
     public void update(User user, String oldLogin) {
-        String sql = "update users set name=?, lastname=?, email=?, login=? where login=?;";
+        String sql = "update users set name=?, lastname=?, email=?, login=?, about_me=? where login=?;";
         try {
+            String s = user.getAboutMe();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getLastname());
             preparedStatement.setString(3, user.getEmail());
             preparedStatement.setString(4, user.getLogin());
-            preparedStatement.setString(5, oldLogin);
+            preparedStatement.setString(5, user.getAboutMe());
+            preparedStatement.setString(6, oldLogin);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

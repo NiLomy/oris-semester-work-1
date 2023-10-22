@@ -39,36 +39,43 @@ public class CreatePostServlet extends HttpServlet {
         String stringDate = ZonedDateTime.now().toString().substring(0, 10);
         Date date = Date.valueOf(stringDate);
 
-        if (postName == null || postCategory == null || postText == null) {
-            resp.setContentType("text/plain");
-            resp.getWriter().write("You entered wrong data");
-        } else {
-            HttpSession httpSession = req.getSession();
-            UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
-            UserDaoImpl userDao = new UserDaoImpl();
-            User user = userDao.get(userDto.getLogin());
-
-            postService.save(
-                    new Post(
-                            postName,
-                            postCategory,
-                            postText,
-                            user.getId(),
-                            date,
-                            0
-                    )
-            );
-//            httpSession.setAttribute("currentPost", new PostDto(
-//                    postName,
-//                    postCategory,
-//                    postText,
-//                    userDto.getLogin(),
-//                    date,
-//                    0
-//            ));
-            httpSession.setAttribute("postName", postName);
-
-            resp.sendRedirect(getServletContext().getContextPath() + "/post?postName=" + postName + "&postAuthor=" + user.getLogin());
+        resp.setContentType("text/plain");
+        if (postName.isEmpty()) {
+            resp.getWriter().write("emptyPostName");
+            return;
         }
+        if (postName.length() < 5) {
+            resp.getWriter().write("shortPostName");
+            return;
+        }
+        if (postName.length() > 100) {
+            resp.getWriter().write("longPostName");
+            return;
+        }
+        if (postCategory.isEmpty()) {
+            resp.getWriter().write("emptyPostCategory");
+            return;
+        }
+        if (postText.isEmpty()) {
+            resp.getWriter().write("emptyPostText");
+            return;
+        }
+        HttpSession httpSession = req.getSession();
+        UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
+        UserDaoImpl userDao = new UserDaoImpl();
+        User user = userDao.get(userDto.getLogin());
+
+        postService.save(
+                new Post(
+                        postName,
+                        postCategory,
+                        postText,
+                        user.getId(),
+                        date,
+                        0
+                )
+        );
+//        httpSession.setAttribute("postName", postName);
+        resp.sendRedirect(getServletContext().getContextPath() + "/post?postName=" + postName + "&postAuthor=" + user.getLogin());
     }
 }

@@ -9,14 +9,16 @@ public class PostDto {
     private String author;
     private Date date;
     private int likes;
+    private String authorImageUrl;
 
-    public PostDto(String name, String category, String content, String author, Date date, int likes) {
+    public PostDto(String name, String category, String content, String author, Date date, int likes, String authorImageUrl) {
         this.name = name;
         this.category = category;
         this.content = content;
         this.author = author;
         this.date = date;
         this.likes = likes;
+        this.authorImageUrl = authorImageUrl;
     }
 
     public String getName() {
@@ -65,5 +67,13 @@ public class PostDto {
 
     public void setLikes(int likes) {
         this.likes = likes;
+    }
+
+    public String getAuthorImageUrl() {
+        return authorImageUrl;
+    }
+
+    public void setAuthorImageUrl(String authorImageUrl) {
+        this.authorImageUrl = authorImageUrl;
     }
 }

@@ -26,8 +26,6 @@ public class RegistrationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher("WEB-INF/view/registration.ftl").forward(req, resp);
-        HttpSession httpSession = req.getSession();
-        httpSession.invalidate();
     }
 
     @Override
@@ -35,33 +33,85 @@ public class RegistrationServlet extends HttpServlet {
         String name = req.getParameter("name");
         String lastname = req.getParameter("lastname");
         String email = req.getParameter("email");
-        String login = req.getParameter("login");
+        String nickname = req.getParameter("nickname");
         String password = req.getParameter("password");
+        String confirmPassword = req.getParameter("confirmPassword");
         String isRemembered = req.getParameter("remember_me");
 
-        if (!userService.isEmailUnique(email)) {
-            HttpSession httpSession = req.getSession();
-            httpSession.setAttribute("isEmailAlreadyExists", "true");
-            resp.sendRedirect(getServletContext().getContextPath() + "/registration");
+        resp.setContentType("text/plain");
+
+        if (name.trim().isEmpty()) {
+            resp.getWriter().write("emptyName");
             return;
         }
-        UserDto userDto = userService.get(login, password);
-        if (userDto == null) {
-            userService.save(
-                    new User(
-                            name, lastname, email, login, password
-                    )
-            );
-            HttpSession httpSession = req.getSession();
-            httpSession.setAttribute("userName", login);
-            if (isRemembered != null && isRemembered.equals("on")) {
-                UserDto user = userService.get(login, password);
-                userService.auth(user, req, resp);
-            }
-            resp.sendRedirect(getServletContext().getContextPath() + "/home");
-        } else {
-            HttpSession httpSession = req.getSession();
-            httpSession.setAttribute("isAlreadyRegistered", "true");
+        if (name.trim().length() > 60) {
+            resp.getWriter().write("longName");
+            return;
         }
+        if (lastname.trim().isEmpty()) {
+            resp.getWriter().write("emptyLastname");
+            return;
+        }
+        if (lastname.trim().length() > 60) {
+            resp.getWriter().write("longLastname");
+            return;
+        }
+        if (email.isEmpty()) {
+            resp.getWriter().write("emptyEmail");
+            return;
+        }
+        if (!email.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")) {
+            resp.getWriter().write("invalidEmail");
+            return;
+        }
+        if (nickname.trim().isEmpty()) {
+            resp.getWriter().write("emptyNickname");
+            return;
+        }
+        if (nickname.trim().length() < 5) {
+            resp.getWriter().write("shortNickname");
+            return;
+        }
+        if (nickname.trim().length() > 60) {
+            resp.getWriter().write("longNickname");
+            return;
+        }
+        if (password.isEmpty()) {
+            resp.getWriter().write("emptyPassword");
+            return;
+        }
+        if (password.length() < 8) {
+            resp.getWriter().write("shortPassword");
+            return;
+        }
+        if (!password.matches("^(?=.*?[a-z])(?=.*?[0-9]).{8,}$")) {
+            resp.getWriter().write("weakPassword");
+            return;
+        }
+        if (!confirmPassword.equals(password)) {
+            resp.getWriter().write("invalidConfirmPassword");
+            return;
+        }
+        if (!userService.isEmailUnique(email)) {
+            resp.getWriter().write("nonUniqueEmail");
+            return;
+        }
+        if (!userService.isNicknameUnique(nickname)) {
+            resp.getWriter().write("nonUniqueNickname");
+            return;
+        }
+
+        userService.save(
+                new User(
+                        name, lastname, email, nickname, password, null
+                )
+        );
+        UserDto user = userService.get(nickname);
+        HttpSession httpSession = req.getSession();
+        httpSession.setAttribute("currentUser", user);
+        if (isRemembered != null && isRemembered.equals("on")) {
+            userService.remember(user, req, resp);
+        }
+        resp.sendRedirect(getServletContext().getContextPath() + "/home");
     }
 }

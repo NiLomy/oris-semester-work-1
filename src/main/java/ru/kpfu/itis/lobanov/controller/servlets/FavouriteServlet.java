@@ -2,6 +2,7 @@ package ru.kpfu.itis.lobanov.controller.servlets;
 
 import ru.kpfu.itis.lobanov.model.service.impl.PostServiceImpl;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
+import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -9,13 +10,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-@WebServlet(urlPatterns = "/posts")
-public class PostsServlet extends HttpServlet {
+@WebServlet(urlPatterns = "/favourite")
+public class FavouriteServlet extends HttpServlet {
     private PostServiceImpl postService;
 
     @Override
@@ -23,16 +23,14 @@ public class PostsServlet extends HttpServlet {
         super.init(config);
         postService = (PostServiceImpl) getServletContext().getAttribute("postService");
     }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<PostDto> posts = postService.getAll();
-        posts.sort((o1, o2) -> {
-            int temp = o2.getLikes() - o1.getLikes();
-            if (temp != 0) {
-                return temp;
-            } else return o2.getDate().compareTo(o1.getDate());
-        });
-        req.setAttribute("posts", posts);
-        req.getRequestDispatcher("WEB-INF/view/posts.ftl").forward(req, resp);
+        HttpSession session = req.getSession();
+        UserDto userDto = (UserDto) session.getAttribute("currentUser");
+        List<PostDto> posts = postService.getAllFavouriteFromUser(userDto.getLogin());
+        posts.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
+        req.setAttribute("favouritePosts", posts);
+        req.getRequestDispatcher("WEB-INF/view/favourite.ftl").forward(req, resp);
     }
 }

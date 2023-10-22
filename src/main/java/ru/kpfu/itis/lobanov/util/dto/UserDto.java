@@ -7,34 +7,33 @@ public class UserDto {
     private String email;
     private String password;
     private String imageUrl;
+    private String aboutMe;
 
-    public UserDto(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
-    public UserDto(String firstName, String lastName, String login, String email) {
+    public UserDto(String firstName, String lastName, String login, String email, String aboutMe) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.login = login;
         this.email = email;
+        this.aboutMe = aboutMe;
     }
 
-    public UserDto(String firstName, String lastName, String login, String email, String imageUrl) {
+    public UserDto(String firstName, String lastName, String login, String email, String imageUrl, String aboutMe) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.login = login;
         this.email = email;
         this.imageUrl = imageUrl;
+        this.aboutMe = aboutMe;
     }
 
-    public UserDto(String firstName, String lastName, String login, String email, String password, String imageUrl) {
+    public UserDto(String firstName, String lastName, String login, String email, String password, String imageUrl, String aboutMe) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.login = login;
         this.email = email;
         this.password = password;
         this.imageUrl = imageUrl;
+        this.aboutMe = aboutMe;
     }
 
     public String getFirstName() {
@@ -83,5 +82,13 @@ public class UserDto {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getAboutMe() {
+        return aboutMe;
+    }
+
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe;
     }
 }

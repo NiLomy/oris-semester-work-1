@@ -27,7 +27,8 @@ public class PostServiceImpl implements PostService {
                 post.getContent(),
                 user.getLogin(),
                 post.getDate(),
-                post.getLikes()
+                post.getLikes(),
+                user.getImageUrl()
         );
     }
 
@@ -42,7 +43,8 @@ public class PostServiceImpl implements PostService {
                 post.getContent(),
                 user.getLogin(),
                 post.getDate(),
-                post.getLikes()
+                post.getLikes(),
+                user.getImageUrl()
         );
     }
 
@@ -57,8 +59,42 @@ public class PostServiceImpl implements PostService {
                         post.getContent(),
                         user.getLogin(),
                         post.getDate(),
-                        post.getLikes()
+                        post.getLikes(),
+                        user.getImageUrl()
                     );
+                }
+        ).collect(Collectors.toList());
+    }
+
+    public List<PostDto> getAllFromUser(String nickname) {
+        User currentUser = userDao.get(nickname);
+        return postDao.getAllFromUser(currentUser.getId()).stream().map(
+                post -> new PostDto(
+                        post.getName(),
+                        post.getCategory(),
+                        post.getContent(),
+                        nickname,
+                        post.getDate(),
+                        post.getLikes(),
+                        currentUser.getImageUrl()
+                )
+        ).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PostDto> getAllFavouriteFromUser(String nickname) {
+        User currentUser = userDao.get(nickname);
+        return postDao.getAllFavouritesFromUser(currentUser.getId()).stream().map(
+                post -> {
+                    User user = userDao.get(post.getAuthorId());
+                    return new PostDto(
+                            post.getName(),
+                            post.getCategory(),
+                            post.getContent(),
+                            user.getLogin(),
+                            post.getDate(),
+                            post.getLikes(),
+                            user.getImageUrl());
                 }
         ).collect(Collectors.toList());
     }
@@ -66,6 +102,20 @@ public class PostServiceImpl implements PostService {
     @Override
     public void save(Post post) {
         postDao.save(post);
+    }
+
+    @Override
+    public void saveToFavourites(String nickname, String postName) {
+        User currentUser = userDao.get(nickname);
+        Post currentPost = postDao.get(postName);
+        postDao.saveToFavourites(currentUser.getId(), currentPost.getId());
+    }
+
+    @Override
+    public void removeFromFavourites(String nickname, String postName) {
+        User currentUser = userDao.get(nickname);
+        Post currentPost = postDao.get(postName);
+        postDao.removeFromFavourites(currentUser.getId(), currentPost.getId());
     }
 
     @Override

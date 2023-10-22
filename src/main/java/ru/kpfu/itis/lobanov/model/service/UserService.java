@@ -19,6 +19,7 @@ public interface UserService {
     boolean updatePassword(String nickname, String password);
     boolean isEmailUnique(String email);
     boolean isPasswordMatches(String nickname, String password);
-    void auth(UserDto user, HttpServletRequest req, HttpServletResponse resp);
-    boolean isAuthorized(HttpServletRequest req, HttpServletResponse resp);
+    void remember(UserDto user, HttpServletRequest req, HttpServletResponse resp);
+    boolean isRemembered(HttpServletRequest req, HttpServletResponse resp);
+    void auth(UserDto user);
 }

@@ -26,6 +26,19 @@ public class PostDaoImpl implements PostDao<Post> {
     }
 
     @Override
+    public Post get(String name) {
+        try {
+            String sql = "SELECT * from posts where name = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+
+            return getPostByStatement(preparedStatement);
+        } catch (SQLException e) {
+            throw new DbException("Can't get post from DB.", e);
+        }
+    }
+
+    @Override
     public Post get(String name, int authorId) {
         try {
             String sql = "SELECT * from posts where name = ? and author_id = ?";
@@ -88,6 +101,58 @@ public class PostDaoImpl implements PostDao<Post> {
     }
 
     @Override
+    public List<Post> getAllFromUser(int authorId) {
+        try {
+            String sql = "SELECT * from posts where author_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, authorId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Post> posts = new ArrayList<>();
+
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    posts.add(
+                            new Post(
+                                    resultSet.getInt("id"),
+                                    resultSet.getString("name"),
+                                    resultSet.getString("category"),
+                                    resultSet.getString("content"),
+                                    resultSet.getInt("author_id"),
+                                    resultSet.getDate("add_date"),
+                                    resultSet.getInt("likes")
+                            )
+                    );
+                }
+            }
+            return posts;
+        } catch (SQLException e) {
+            throw new DbException("Can't get post list from DB.", e);
+        }
+    }
+
+    @Override
+    public List<Post> getAllFavouritesFromUser(int userId) {
+        try {
+            String sql = "SELECT * from users_posts where user_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Post> posts = new ArrayList<>();
+
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    posts.add(
+                            get(resultSet.getInt("post_id"))
+                    );
+                }
+            }
+            return posts;
+        } catch (SQLException e) {
+            throw new DbException("Can't get post list from DB.", e);
+        }
+    }
+
+    @Override
     public void save(Post post) {
         String sql = "insert into posts (name, category, content, author_id, add_date, likes) values (?, ?, ?, ?, ?, ?);";
         try {
@@ -102,6 +167,34 @@ public class PostDaoImpl implements PostDao<Post> {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DbException("Can't save user into DB.", e);
+        }
+    }
+
+    @Override
+    public void saveToFavourites(int user_id, int post_id) {
+        String sql = "insert into users_posts (user_id, post_id) values (?, ?);";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, user_id);
+            preparedStatement.setInt(2, post_id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't save user into DB.", e);
+        }
+    }
+
+    @Override
+    public void removeFromFavourites(int user_id, int post_id) {
+        String sql = "delete from users_posts where user_id = ? and post_id = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, user_id);
+            preparedStatement.setInt(2, post_id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't save post like into DB.", e);
         }
     }
 

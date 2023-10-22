@@ -1,52 +1,5 @@
 <html lang="en">
 
-<header style="align-items: center;">
-    <div class="wrap" style="margin: 0 auto; width: max-content; align-items: center;">
-        <div class="header" style="padding: 0.3em 0;">
-            <div class="nav">
-                <ul>
-                    <li class="active" style="display: inline-block;"><a href="${pageContext}/home" style="display: block;
-    font-size: 1.1em;
-    text-decoration: none;
-    padding: 0.5em 1em;
-    -webkit-transition: 0.9s;
-    -moz-transition: 0.9s;
-    -o-transition: 0.9s;
-    transition: 0.9s;">Main</a> </li>
-                    <li style="display: inline-block;"><a href="${pageContext}/posts" style="display: block;
-    font-size: 1.1em;
-    text-decoration: none;
-    padding: 0.5em 1em;
-    -webkit-transition: 0.9s;
-    -moz-transition: 0.9s;
-    -o-transition: 0.9s;
-    transition: 0.9s;">Posts</a> </li>
-                    <#if currentUser? has_content>
-                        <li style="display: inline-block;"><a href="${pageContext}/profile" style="display: block;
-    font-size: 1.1em;
-    padding: 0.5em 1em;
-    text-decoration: none;
-    -webkit-transition: 0.9s;
-    -moz-transition: 0.9s;
-    -o-transition: 0.9s;
-    transition: 0.9s;">Profile</a> </li>
-                    <#else>
-                        <li style="display: inline-block;"><a href="${pageContext}/login" style="display: block;
-    font-size: 1.1em;
-    padding: 0.5em 1em;
-    text-decoration: none;
-    -webkit-transition: 0.9s;
-    -moz-transition: 0.9s;
-    -o-transition: 0.9s;
-    transition: 0.9s;">Login</a> </li>
-                    </#if>
-                </ul>
-            </div>
-            <div class="clear"></div>
-        </div>
-    </div>
-</header>
-
 <#include "base.ftl">
 
 <#macro scripts>
@@ -66,63 +19,265 @@
         )
 
         $(document).on(
-            "click", "#send-message-button", function () {
-                let newMessage = $("#new-message").val();
+            "click", "#unauth-like-button", function () {
+                alert("To like posts you should be logged in");
+            }
+        )
+
+        $(document).ready(function () {
+            $(".message-like-button").click(function () {
+
+                var messageId = $(this).data("message-id");
 
                 $.post(
                     "${pageContext}/post", {
-                        "action": "sendMessage",
-                        "newMessage": newMessage
+                        "action": 'pressMessageLike',
+                        "messageId": messageId
                     }, function (response) {
-                        $("#messages").append(
-                            '<div>' + response.author + ' ' + response.date + '<br>' + response.messageContent + '<br>' + response.likes + '<br><br></div>'
-                        )
+                        $("#message-like-" + messageId).text(response)
                     }
                 )
+            })
+
+            $(".unauth-message-like-button").click(function () {
+                alert("To like comments you should be logged in");
+            })
+        })
+
+        $(document).on(
+            "click", "#unauth-favourite", function () {
+                alert("To mark posts you should be logged in");
             }
         )
+
+        let unfavouriteClickCount = 0;
+        $(document).on(
+            "click", "#unfavourite", function () {
+                if (unfavouriteClickCount % 2 === 0) {
+                    $.post(
+                        "${pageContext}/post", {
+                            "action": 'pressUnfavourite'
+                        }, function (response) {
+                            $("#unfavourite").html('<i class="fa fa-bookmark" aria-hidden="true"></i> Mark favourite');
+                        }
+                    )
+                } else {
+                    $.post(
+                        "${pageContext}/post", {
+                            "action": 'pressFavourite'
+                        }, function (response) {
+                            $("#unfavourite").html('<i class="fa fa-bookmark-o" aria-hidden="true"></i> Remove from favourites');
+                        }
+                    )
+                }
+                unfavouriteClickCount++;
+            }
+        )
+
+        let favouriteClickCount = 0;
+        $(document).on(
+            "click", "#favourite", function () {
+                let clickCount = 0;
+                if (favouriteClickCount % 2 === 0) {
+                    $.post(
+                        "${pageContext}/post", {
+                            "action": 'pressFavourite'
+                        }, function (response) {
+                            $("#favourite").html('<i class="fa fa-bookmark-o" aria-hidden="true"></i> Remove from favourites');
+                        }
+                    )
+                } else {
+                    $.post(
+                        "${pageContext}/post", {
+                            "action": 'pressUnfavourite'
+                        }, function (response) {
+                            $("#favourite").html('<i class="fa fa-bookmark" aria-hidden="true"></i> Mark favourite');
+                        }
+                    )
+                }
+                favouriteClickCount++;
+            }
+        )
+
+        $(document).on(
+            "click", "#send-message-button", function () {
+                let newMessage = $("#new-message").val();
+                if (newMessage !== null && newMessage.trim() !== "") {
+                    $.post(
+                        "${pageContext}/post", {
+                            "action": "sendMessage",
+                            "newMessage": newMessage
+                        }, function (response) {
+                            $("#messages").append(
+                                '<section class="gradient-custom"><div class="container my-1 py-1"><div class="row d-flex justify-content-center"><div class="col-md-12 col-lg-10 col-xl-8"><div class="card"><div class="card-body p-4"><div class="d-flex flex-start"><img class="rounded-circle shadow-1-strong me-3" src= "' + response.authorImgUrl + '" alt="avatar" width="65" height="65" /><div class="flex-grow-1 flex-shrink-1"><div><div class="d-flex justify-content-between align-items-center"> <p class="mb-1">' + response.author + ' <span class="small"> - ' + response.date + '</span></p><a href="#!"><i class="fas fa-reply fa-xs"></i><span class="small"> reply</span></a></div><pre class="small mb-0" style="text-align: left">' + response.messageContent + '</pre><div class="small d-flex justify-content-start"><div class="d-flex align-items-center me-3"><i class="far fa-thumbs-up me-2"></i><p class="mb-0">' + response.likes + ' Like</p></div></div></div></div></div></div></div></div></div></div></section>'
+                                // '<div>' + response.author + ' ' + response.date + '<br>' + response.messageContent + '<br>' + response.likes + '<br><br></div>'
+                            )
+                            $("#new-message").val('<i class="fa fa-bookmark" aria-hidden="true"></i> ');
+
+                        }
+                    )
+                }
+            }
+        )
+
+        function handleCommentWidthChange() {
+            $('.message-card').each(function () {
+                const textElement = $(this).find('.message');
+                textElement.css('white-space', 'normal');
+            });
+        }
+
+        $(window).on('resize', handleCommentWidthChange);
+
+        handleCommentWidthChange();
     </script>
 </#macro>
-<#macro styles></#macro>
+<#macro styles>
+</#macro>
 
-<#macro title>Post</#macro>
+<#macro title>${currentPost.name}</#macro>
 
 <#macro content1>
-    <div style="font-size:150%; text-align:center">
-        <b>${currentPost.name}</b>
-    </div>
 </#macro>
 <#macro content2>
-    <div style="font-size:110%; text-align: center">
-        ${currentPost.category} ${currentPost.author} ${currentPost.date}
-        <br>
-        <br>
-        ${currentPost.content}
-        <br>
-        <div id="likes">${currentPost.likes}</div>
-        <input type="button" value="Like" id="like-button">
+    <div>
+        <section>
+            <div class="container my-2 py-2">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-md-12 col-lg-10 col-xl-8">
+                        <div class="card message-card">
+                            <div class="card-body">
+                                <div class="d-flex flex-start align-items-center">
+                                    <img class="rounded-circle shadow-1-strong me-3"
+                                         src="${currentPost.authorImageUrl}" alt="avatar" width="60"
+                                         height="60" />
+                                    <div>
+                                        <h6 class="fw-bold text-primary mb-1 me-5">${currentPost.author}</h6>
+                                    </div>
+                                    <div>
+                                        <h2 class="fw-bold text-primary mb-1 ms-5">${currentPost.name}</h2>
+                                        <p class="text-muted small mb-0 ms-5">
+                                            ${currentPost.date}
+                                        </p>
+                                    </div>
+                                </div>
+<#--                                style="font-size:110%; text-align: center"-->
+                                <p class="message mt-3 mb-4 pb-2">
+                                    ${currentPost.content}
+                                </p>
+                                <div class="d-flex justify-content-between" style="font-size: large">
+                                    <#if currentUser? has_content>
+                                        <p id="likes">${currentPost.likes} <a id="like-button" style="cursor: pointer; text-decoration: none; color: inherit"><i class="far fa-thumbs-up me-2"></i></a></p>
+                                    <#else>
+                                        <p id="unauth-likes">${currentPost.likes} <a id="unauth-like-button" style="cursor: pointer; text-decoration: none; color: inherit"><i class="far fa-thumbs-up me-2"></i></a></p>
+                                    </#if>
+                                    <div>
+                                        <#if currentUser? has_content>
+                                            <#if isFavourite? has_content>
+                                                <button type="button" id="unfavourite" class="btn btn-primary me-1 flex-grow-1"><i class="fa fa-bookmark-o" aria-hidden="true"></i> Remove from favourites</button>
+                                            <#else>
+                                                <button type="button" id="favourite" class="btn btn-primary me-1 flex-grow-1"><i class="fa fa-bookmark" aria-hidden="true"></i> Mark favourite</button>
+                                            </#if>
+                                        <#else>
+                                            <button type="button" id="unauth-favourite" class="btn btn-primary me-1 flex-grow-1"><i class="fa fa-bookmark-o" aria-hidden="true"></i> Mark favourite</button>
+                                        </#if>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
         <br>
         <div id="messages">
             <div>
-                <#if messages?has_content>
+                <#if messages? has_content>
                     <#list messages as message>
-                        ${message.author} ${message.date}
-                        <br>
-                        ${message.content}
-                        ${message.likes}
-                        <br>
-                        <br>
+                        <section class="gradient-custom">
+                            <div class="container my-1 py-1">
+                                <div class="row d-flex justify-content-center">
+                                    <div class="col-md-12 col-lg-10 col-xl-8">
+                                        <div class="card message-card"  style="border: 1px solid">
+                                            <div class="card-body p-4">
+                                                <div class="d-flex flex-start">
+                                                    <img class="rounded-circle shadow-1-strong me-3"
+                                                         src="${message.authorImgUrl}" alt="avatar" width="65"
+                                                         height="65" />
+                                                    <div class="flex-grow-1 flex-shrink-1">
+                                                        <div>
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <a href="${pageContext}/another-profile?anotherUser=${message.author}">
+                                                                    <p class="mb-1">
+                                                                        ${message.author}
+                                                                    </p>
+                                                                </a>
+                                                                <div><span class="small">${message.date}</span></div>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between text-wrap">
+                                                                <p id="user-message" class="small mb-0 message text-break text-justify m-1"
+                                                                   style="color: #000;">${message.content}</p>
+                                                            </div>
+                                                            <div class="small d-flex justify-content-start">
+                                                                <div class="d-flex align-items-center me-3">
+                                                                    <#if currentUser? has_content>
+                                                                        <p id="message-like-${message.id}" class="mb-0">${message.likes} <a id="message-like-button" class="message-like-button" style="cursor: pointer; text-decoration: none; color: inherit"  data-message-id="${message.id}"><i class="far fa-thumbs-up me-2"></i></a></p>
+                                                                    <#else>
+                                                                        <p id="unauth-message-like-${message.id}" class="mb-0">${message.likes} <a id="unauth-message-like-button" class="unauth-message-like-button" style="cursor: pointer; text-decoration: none; color: inherit"  data-message-id="${message.id}"><i class="far fa-thumbs-up me-2"></i></a></p>
+                                                                    </#if>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
                     </#list>
                 </#if>
             </div>
         </div>
         <br>
         <div>
-            <input id="new-message" type="text" name="name">
-            <input type="button" value="Send message" id="send-message-button">
+            <section>
+                <div class="container my-1 py-1">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-md-12 col-lg-10 col-xl-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="flex-start align-items-center">
+                                        <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
+                                            <#if currentUser? has_content>
+                                                <div class="d-flex flex-start w-100">
+                                                    <img class="rounded-circle shadow-1-strong me-3"
+                                                         src="${currentUser.imageUrl}" alt="avatar" width="40"
+                                                         height="40" />
+                                                    <div class="w-100 form-floating">
+                                                        <textarea id="new-message" placeholder="Type comment" class="form-control" rows="4" style="background: #fff;"></textarea>
+                                                        <label class="form-floating" for="new-message">Message</label>
+                                                        <p id="new-message-error" class="invalid-feedback d-block" role="alert"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="float-end mt-2 pt-1">
+                                                    <button id="send-message-button" type="button" class="btn btn-primary btn-sm">Send comment</button>
+                                                </div>
+                                            <#else>
+                                                <div class="w-100 form-floating" style="text-align: center">
+                                                    <p id="anon-user-message" class="form-control">To write comments you should be logged in</p>
+                                                </div>
+                                            </#if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-        <div id="test"></div>
     </div>
-    <br>
 </#macro>
 </html>

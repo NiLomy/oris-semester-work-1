@@ -22,27 +22,27 @@ public class UserServiceImpl implements UserService {
     public UserDto get(int id) {
         User user = userDao.get(id);
         if (user == null) return null;
-        return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getImageUrl());
+        return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getImageUrl(), user.getAboutMe());
     }
 
     @Override
     public UserDto get(String nickname) {
         User user = userDao.get(nickname);
         if (user == null) return null;
-        return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getImageUrl());
+        return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getImageUrl(), user.getAboutMe());
     }
 
     @Override
     public UserDto get(String login, String password) {
         User user = userDao.get(login, password);
         if (user == null) return null;
-        return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getPassword(), user.getImageUrl());
+        return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getPassword(), user.getImageUrl(), user.getAboutMe());
     }
 
     @Override
     public List<UserDto> getAll() {
         return userDao.getAll().stream().map(
-                u -> new UserDto(u.getName(), u.getLastname(), u.getLogin(), u.getEmail())
+                u -> new UserDto(u.getName(), u.getLastname(), u.getLogin(), u.getEmail(), u.getAboutMe())
         ).collect(Collectors.toList());
     }
 
@@ -92,6 +92,10 @@ public class UserServiceImpl implements UserService {
         return getAll().stream().noneMatch(userDto -> userDto.getEmail().equals(email));
     }
 
+    public boolean isNicknameUnique(String nickname) {
+        return getAll().stream().noneMatch(userDto -> userDto.getLogin().equals(nickname));
+    }
+
     @Override
     public boolean isPasswordMatches(String nickname, String password) {
         User user = userDao.get(nickname);
@@ -99,14 +103,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void auth(UserDto user, HttpServletRequest req, HttpServletResponse resp) {
+    public void remember(UserDto user, HttpServletRequest req, HttpServletResponse resp) {
         Cookie cookie = new Cookie("user", user.getLogin());
         cookie.setMaxAge(24 * 3_600);
         resp.addCookie(cookie);
     }
 
     @Override
-    public boolean isAuthorized(HttpServletRequest req, HttpServletResponse resp) {
+    public boolean isRemembered(HttpServletRequest req, HttpServletResponse resp) {
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
@@ -116,5 +120,10 @@ public class UserServiceImpl implements UserService {
             }
         }
         return false;
+    }
+
+    @Override
+    public void auth(UserDto user) {
+
     }
 }

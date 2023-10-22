@@ -26,6 +26,22 @@ public class MessageDaoImpl implements MessageDao<Message> {
         }
     }
 
+    public Message get(int authorId, String content, String post, Date date, int likes) {
+        try {
+            String sql = "SELECT * from messages where author_id = ? and content = ? and post = ? and date = ? and likes = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, authorId);
+            preparedStatement.setString(2, content);
+            preparedStatement.setString(3, post);
+            preparedStatement.setDate(4, date);
+            preparedStatement.setInt(5, likes);
+
+            return getMessageByStatement(preparedStatement);
+        } catch (SQLException e) {
+            throw new DbException("Can't get message from DB.", e);
+        }
+    }
+
     private Message getMessageByStatement(PreparedStatement preparedStatement) throws SQLException {
         ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -33,7 +49,7 @@ public class MessageDaoImpl implements MessageDao<Message> {
             if (resultSet.next()) {
                 return new Message(
                         resultSet.getInt("id"),
-                        resultSet.getString("author"),
+                        resultSet.getInt("author_id"),
                         resultSet.getString("content"),
                         resultSet.getString("post"),
                         resultSet.getDate("date"),
@@ -58,7 +74,7 @@ public class MessageDaoImpl implements MessageDao<Message> {
                     messages.add(
                             new Message(
                                     resultSet.getInt("id"),
-                                    resultSet.getString("author"),
+                                    resultSet.getInt("author_id"),
                                     resultSet.getString("content"),
                                     resultSet.getString("post"),
                                     resultSet.getDate("date"),
@@ -86,7 +102,7 @@ public class MessageDaoImpl implements MessageDao<Message> {
                     messages.add(
                             new Message(
                                     resultSet.getInt("id"),
-                                    resultSet.getString("author"),
+                                    resultSet.getInt("author_id"),
                                     resultSet.getString("content"),
                                     resultSet.getString("post"),
                                     resultSet.getDate("date"),
@@ -103,10 +119,10 @@ public class MessageDaoImpl implements MessageDao<Message> {
 
     @Override
     public void save(Message message) {
-        String sql = "insert into messages (author, content, post, date, likes) values (?, ?, ?, ?, ?);";
+        String sql = "insert into messages (author_id, content, post, date, likes) values (?, ?, ?, ?, ?);";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, message.getAuthor());
+            preparedStatement.setInt(1, message.getAuthorId());
             preparedStatement.setString(2, message.getContent());
             preparedStatement.setString(3, message.getPost());
             preparedStatement.setDate(4, message.getDate());
@@ -115,6 +131,39 @@ public class MessageDaoImpl implements MessageDao<Message> {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DbException("Can't save message into DB.", e);
+        }
+    }
+
+    @Override
+    public void updateLikes(int id, int likes) {
+        String sql = "update messages set likes = ? where id = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, likes);
+            preparedStatement.setInt(2, id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't save post into DB.", e);
+        }
+    }
+
+    @Override
+    public int getMostFrequentUserId() {
+        try {
+            String sql = "SELECT author_id FROM messages GROUP BY author_id ORDER BY count(*) DESC LIMIT 1";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            int userId = 0;
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    userId = resultSet.getInt("author_id");
+                }
+            }
+            return userId;
+        } catch (SQLException e) {
+            throw new DbException("Can't save post into DB.", e);
         }
     }
 }

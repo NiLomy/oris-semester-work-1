@@ -5,23 +5,23 @@ import java.util.Objects;
 
 public class Message {
     private int id;
-    private String author;
+    private int authorId;
     private String content;
     private String post;
     private Date date;
     private int likes;
 
-    public Message(String author, String content, String post, Date date, int likes) {
-        this.author = author;
+    public Message(int authorId, String content, String post, Date date, int likes) {
+        this.authorId = authorId;
         this.content = content;
         this.post = post;
         this.date = date;
         this.likes = likes;
     }
 
-    public Message(int id, String author, String content, String post, Date date, int likes) {
+    public Message(int id, int authorId, String content, String post, Date date, int likes) {
         this.id = id;
-        this.author = author;
+        this.authorId = authorId;
         this.content = content;
         this.post = post;
         this.date = date;
@@ -36,20 +36,20 @@ public class Message {
         Message message = (Message) o;
 
         if (id != message.id) return false;
+        if (authorId != message.authorId) return false;
         if (likes != message.likes) return false;
-        if (!Objects.equals(author, message.author)) return false;
-        if (!Objects.equals(content, message.content)) return false;
-        if (!Objects.equals(post, message.post)) return false;
-        return Objects.equals(date, message.date);
+        if (!content.equals(message.content)) return false;
+        if (!post.equals(message.post)) return false;
+        return date.equals(message.date);
     }
 
     @Override
     public int hashCode() {
         int result = id;
-        result = 31 * result + (author != null ? author.hashCode() : 0);
-        result = 31 * result + (content != null ? content.hashCode() : 0);
-        result = 31 * result + (post != null ? post.hashCode() : 0);
-        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + authorId;
+        result = 31 * result + content.hashCode();
+        result = 31 * result + post.hashCode();
+        result = 31 * result + date.hashCode();
         result = 31 * result + likes;
         return result;
     }
@@ -62,12 +62,12 @@ public class Message {
         this.id = id;
     }
 
-    public String getAuthor() {
-        return author;
+    public int getAuthorId() {
+        return authorId;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
     }
 
     public String getContent() {

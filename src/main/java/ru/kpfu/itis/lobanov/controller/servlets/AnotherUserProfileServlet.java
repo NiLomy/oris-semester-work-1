@@ -15,23 +15,36 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "profileServlet", urlPatterns = "/profile")
-public class ProfileServlet extends HttpServlet {
+@WebServlet(urlPatterns = "/another-profile")
+public class AnotherUserProfileServlet extends HttpServlet {
+    private UserServiceImpl userService;
     private PostServiceImpl postService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        userService = (UserServiceImpl) getServletContext().getAttribute("userService");
         postService = (PostServiceImpl) getServletContext().getAttribute("postService");
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        UserDto userDto = (UserDto) session.getAttribute("currentUser");
-        List<PostDto> posts = postService.getAllFromUser(userDto.getLogin());
+        String nickname = req.getParameter("anotherUser");
+        UserDto anotherUserDto = userService.get(nickname);
+        HttpSession httpSession = req.getSession();
+        req.setAttribute("anotherUser", anotherUserDto);
+        UserDto currentUserDto = (UserDto) httpSession.getAttribute("currentUser");
+
+        List<PostDto> posts = postService.getAllFromUser(nickname);
         posts.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
-        req.setAttribute("currentUserPosts", posts);
-        req.getRequestDispatcher("WEB-INF/view/profile.ftl").forward(req, resp);
+
+        if (currentUserDto != null && anotherUserDto.getLogin().equals(currentUserDto.getLogin())) {
+            req.setAttribute("currentUserPosts", posts);
+            req.getRequestDispatcher("WEB-INF/view/profile.ftl").forward(req, resp);
+        } else {
+            req.setAttribute("anotherUserPosts", posts);
+            req.getRequestDispatcher("WEB-INF/view/another-user-profile.ftl").forward(req, resp);
+        }
     }
+
 }

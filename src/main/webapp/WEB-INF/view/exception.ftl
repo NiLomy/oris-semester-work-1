@@ -8,7 +8,9 @@
     Exception details
 </#macro>
 
-<#macro content>
+<#macro content1></#macro>
+
+<#macro content2>
     <h1>exception details:</h1>
     <strong>Request uri:</strong>${uri}<br>
     <strong>Status code:</strong>${statusCode}<br>
