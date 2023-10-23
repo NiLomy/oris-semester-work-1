@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostLikeDaoImpl implements PostLikeDao<PostLike> {
+public class PostLikeDaoImpl implements PostLikeDao {
     private final Connection connection = DatabaseConnectionProvider.getConnection();
     @Override
     public PostLike get(int id) {
@@ -120,16 +120,30 @@ public class PostLikeDaoImpl implements PostLikeDao<PostLike> {
     }
 
     @Override
-    public void remove(PostLike postLike) {
-        String sql = "delete from likes_for_posts where nickname = ? and post = ?;";
+    public void update(PostLike postLike, int id) {
+        String sql = "update likes_for_posts set nickname=?, post=? where id=?;";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, postLike.getNickname());
             preparedStatement.setString(2, postLike.getPost());
+            preparedStatement.setInt(3, postLike.getId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DbException("Can't save post like into DB.", e);
+            throw new DbException("Can't update post like into DB.", e);
+        }
+    }
+
+    @Override
+    public void remove(PostLike postLike) {
+        String sql = "delete from likes_for_posts where id = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, postLike.getId());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't delete post like from DB.", e);
         }
     }
 }

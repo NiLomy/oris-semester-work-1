@@ -1,5 +1,6 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
+import ru.kpfu.itis.lobanov.model.service.PostService;
 import ru.kpfu.itis.lobanov.model.service.impl.PostServiceImpl;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 
@@ -10,13 +11,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-@WebServlet(urlPatterns = "/posts")
+@WebServlet(name = "postsServlet", urlPatterns = "/posts")
 public class PostsServlet extends HttpServlet {
-    private PostServiceImpl postService;
+    private PostService postService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {

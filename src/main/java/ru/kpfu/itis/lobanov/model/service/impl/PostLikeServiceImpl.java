@@ -1,16 +1,13 @@
 package ru.kpfu.itis.lobanov.model.service.impl;
 
-import ru.kpfu.itis.lobanov.model.dao.PostDao;
 import ru.kpfu.itis.lobanov.model.dao.PostLikeDao;
-import ru.kpfu.itis.lobanov.model.dao.impl.PostDaoImpl;
 import ru.kpfu.itis.lobanov.model.dao.impl.PostLikeDaoImpl;
-import ru.kpfu.itis.lobanov.model.entity.Post;
 import ru.kpfu.itis.lobanov.model.entity.PostLike;
 import ru.kpfu.itis.lobanov.model.service.PostLikeService;
 import ru.kpfu.itis.lobanov.util.dto.PostLikeDto;
 
 public class PostLikeServiceImpl implements PostLikeService {
-    private final PostLikeDao<PostLike> postLikeDao = new PostLikeDaoImpl();
+    private final PostLikeDao postLikeDao = new PostLikeDaoImpl();
     @Override
     public PostLikeDto get(int id) {
         PostLike postLike = postLikeDao.get(id);
@@ -41,6 +38,7 @@ public class PostLikeServiceImpl implements PostLikeService {
 
     @Override
     public void remove(PostLike postLike) {
-        postLikeDao.remove(postLike);
+        PostLike like = postLikeDao.get(postLike.getNickname(), postLike.getPost());
+        postLikeDao.remove(like);
     }
 }

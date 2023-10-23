@@ -1,5 +1,3 @@
-<html lang="en">
-
 <#include "base.ftl">
 
 <#macro scripts>
@@ -125,8 +123,8 @@
             <section class="gradient-custom all-posts">
                 <div id="nothing-found" style="display: none">
                     <p >No results found</p>
-                    <a class="btn btn-primary me-1 flex-grow-1" href="${pageContext}/create-post">
-                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Create new post about this
+                    <a class="btn btn-primary me-1 flex-grow-1" href="${pageContext}/posts">
+                        <i class="fa fa-list-ul" aria-hidden="true"></i> Search for interesting posts
                     </a>
                 </div>
                 <#list favouritePosts as p>
@@ -136,15 +134,17 @@
                                 <div class="card">
                                     <div class="card-body p-4">
                                         <div class="d-flex flex-start">
-                                            <img class="rounded-circle shadow-1-strong me-3"
-                                                 src="${p.authorImageUrl}" alt="avatar" width="65"
-                                                 height="65" />
+                                            <a style="text-decoration: none; color: inherit" href="${pageContext}/another-profile?anotherUser=${currentPost.author}">
+                                                <img class="rounded-circle shadow-1-strong me-3"
+                                                     src="${p.authorImageUrl}" alt="avatar" width="65"
+                                                     height="65" />
+                                            </a>
                                             <div class="flex-grow-1 flex-shrink-1">
                                                 <div>
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <a href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}">
+                                                        <a href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}" style="text-decoration: none; color: inherit">
                                                             <p class="post-name">
-                                                                ${p.name}
+                                                                <b>${p.name}</b>
                                                             </p>
                                                         </a>
                                                         <p class="category">
@@ -171,7 +171,13 @@
                     </div>
                 </#list>
             </section>
+        <#else>
+            <div id="nothing">
+                <p>You have no favourite posts</p>
+                <a class="btn btn-primary me-1 flex-grow-1" href="${pageContext}/posts">
+                    <i class="fa fa-list-ul" aria-hidden="true"></i> Search for interesting posts
+                </a>
+            </div>
         </#if>
     </div>
 </#macro>
-</html>

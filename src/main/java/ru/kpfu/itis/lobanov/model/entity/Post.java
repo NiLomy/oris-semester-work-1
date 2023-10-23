@@ -1,6 +1,6 @@
 package ru.kpfu.itis.lobanov.model.entity;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class Post {
@@ -9,10 +9,10 @@ public class Post {
     private String category;
     private String content;
     private int authorId;
-    private Date date;
+    private Timestamp date;
     private int likes;
 
-    public Post(String name, String category, String content, int authorId, Date date, int likes) {
+    public Post(String name, String category, String content, int authorId, Timestamp date, int likes) {
         this.name = name;
         this.category = category;
         this.content = content;
@@ -21,7 +21,7 @@ public class Post {
         this.likes = likes;
     }
 
-    public Post(int id, String name, String category, String content, int authorId, Date date, int likes) {
+    public Post(int id, String name, String category, String content, int authorId, Timestamp date, int likes) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -44,7 +44,7 @@ public class Post {
         if (!name.equals(post.name)) return false;
         if (!category.equals(post.category)) return false;
         if (!content.equals(post.content)) return false;
-        return Objects.equals(date, post.date);
+        return date.equals(post.date);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class Post {
         result = 31 * result + category.hashCode();
         result = 31 * result + content.hashCode();
         result = 31 * result + authorId;
-        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + date.hashCode();
         result = 31 * result + likes;
         return result;
     }
@@ -99,11 +99,11 @@ public class Post {
         this.authorId = authorId;
     }
 
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

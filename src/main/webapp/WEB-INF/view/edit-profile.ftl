@@ -1,5 +1,3 @@
-<html lang="en">
-
 <#include "base.ftl">
 
 <#macro scripts>
@@ -7,22 +5,18 @@
     <script>
         $(document).ready(function () {
             $("#image-change").click(function (event) {
-                //stop submit the form, we will post it manually.
                 event.preventDefault();
 
-                // Get form
                 const form = $('#image-form')[0];
 
-                // Create an FormData object
                 const data = new FormData(form);
 
-                // disabled the submit button
                 $("#image-change").prop("disabled", true);
 
                 $.ajax({
                     type: "POST",
                     enctype: 'multipart/form-data',
-                    url: "${pageContext}/edit_profile",
+                    url: "${pageContext}/edit-profile",
                     data: data,
                     processData: false,
                     contentType: false,
@@ -249,7 +243,7 @@
                     let emptyAboutMe = $("#empty-about-me").val();
 
                     $.post(
-                        "${pageContext}/edit_profile", {
+                        "${pageContext}/edit-profile", {
                             "action": "updateInfo",
                             "nickname": nickname,
                             "name": name,
@@ -314,7 +308,7 @@
                     let repeatPassword = $("#new-password-repeat").val()
 
                     $.post(
-                        "${pageContext}/edit_profile", {
+                        "${pageContext}/edit-profile", {
                             "action": "changePassword",
                             "currentPassword": currentPassword,
                             "newPassword": newPassword,
@@ -386,7 +380,7 @@
                                         <div class="container my-1 py-1">
                                             <div class="row d-flex justify-content-start">
                                                 <div class="col-md-8 col-lg-6 col-xl-6">
-                                                    <form action="edit_profile" method="post" id="edit-profile-form">
+                                                    <form action="edit-profile" method="post" id="edit-profile-form">
                                                         <div class="ps-2" style="text-align: left" >
                                                             <label for="name">Name: </label><input id="name" class="form-control" type="text" name="name" maxlength="60" value="${currentUser.firstName}">
                                                             <p id="name-error" class="invalid-feedback d-block" role="alert"></p>
@@ -429,4 +423,3 @@
         </div>
     </section>
 </#macro>
-</html>

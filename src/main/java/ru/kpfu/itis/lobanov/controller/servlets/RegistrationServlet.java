@@ -1,6 +1,7 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
 import ru.kpfu.itis.lobanov.model.entity.User;
+import ru.kpfu.itis.lobanov.model.service.UserService;
 import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
@@ -15,7 +16,7 @@ import java.io.IOException;
 
 @WebServlet(name = "registrationServlet", urlPatterns = "/registration")
 public class RegistrationServlet extends HttpServlet {
-    private UserServiceImpl userService;
+    private UserService userService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -109,6 +110,7 @@ public class RegistrationServlet extends HttpServlet {
         UserDto user = userService.get(nickname);
         HttpSession httpSession = req.getSession();
         httpSession.setAttribute("currentUser", user);
+
         if (isRemembered != null && isRemembered.equals("on")) {
             userService.remember(user, req, resp);
         }

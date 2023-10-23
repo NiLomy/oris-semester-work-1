@@ -1,5 +1,3 @@
-<html lang="en">
-
 <#include "base.ftl">
 
 <#macro scripts></#macro>
@@ -37,12 +35,11 @@
                                          alt="Profile image" class="img-fluid"
                                          style="width: 200px; border-radius: 10px;">
                                     <div class="d-flex pt-1">
-                                        <a href="${pageContext}/edit_profile" type="button" class="btn btn-primary flex-grow-1">Edit profile</a>
+                                        <a href="${pageContext}/edit-profile" type="button" class="btn btn-primary flex-grow-1">Edit profile</a>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                     <h5 class="mb-1">${currentUser.login}</h5>
-<#--                                    <p class="mb-2 pb-1" style="color: #2b2a2a;">Senior Journalist</p>-->
                                     <p class="mb-2 pb-1" style="color: #2b2a2a;">Email: ${currentUser.email}</p>
                                     <#if currentUser.aboutMe? has_content>
                                         <div class="d-flex justify-content-start rounded-3 p-2 mb-2 text-wrap"
@@ -52,10 +49,6 @@
                                             </p>
                                         </div>
                                     </#if>
-<#--                                    <div class="d-flex pt-1">-->
-<#--                                        <button type="button" class="btn btn-outline-primary me-1 flex-grow-1">Chat</button>-->
-<#--                                        <button type="button" class="btn btn-primary flex-grow-1">Follow</button>-->
-<#--                                    </div>-->
                                 </div>
                             </div>
                         </div>
@@ -125,4 +118,3 @@
         </div>
     </section>
 </#macro>
-</html>

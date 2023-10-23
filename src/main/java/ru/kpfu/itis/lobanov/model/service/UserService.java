@@ -18,8 +18,7 @@ public interface UserService {
     boolean updateImageUrl(String nickName, String imageUrl);
     boolean updatePassword(String nickname, String password);
     boolean isEmailUnique(String email);
+    boolean isNicknameUnique(String nickname);
     boolean isPasswordMatches(String nickname, String password);
     void remember(UserDto user, HttpServletRequest req, HttpServletResponse resp);
-    boolean isRemembered(HttpServletRequest req, HttpServletResponse resp);
-    void auth(UserDto user);
 }

@@ -1,12 +1,10 @@
 package ru.kpfu.itis.lobanov.model.dao;
 
+import ru.kpfu.itis.lobanov.model.entity.PostLike;
+
 import java.util.List;
 
-public interface PostLikeDao<T> {
-    T get(int id);
-    T get(String nickname, String post);
-    List<T> getAllFromPost(String post);
-    List<T> getAll();
-    void save(T t);
-    void remove(T t);
+public interface PostLikeDao extends Dao<PostLike> {
+    PostLike get(String nickname, String post);
+    List<PostLike> getAllFromPost(String post);
 }

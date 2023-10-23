@@ -21,11 +21,11 @@ public class PostLike {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PostLike that = (PostLike) o;
+        PostLike postLike = (PostLike) o;
 
-        if (id != that.id) return false;
-        if (!nickname.equals(that.nickname)) return false;
-        return post.equals(that.post);
+        if (id != postLike.id) return false;
+        if (!nickname.equals(postLike.nickname)) return false;
+        return post.equals(postLike.post);
     }
 
     @Override

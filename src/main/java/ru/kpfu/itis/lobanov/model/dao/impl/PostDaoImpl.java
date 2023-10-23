@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostDaoImpl implements PostDao<Post> {
+public class PostDaoImpl implements PostDao {
     private final Connection connection = DatabaseConnectionProvider.getConnection();
 
     @Override
@@ -18,19 +18,6 @@ public class PostDaoImpl implements PostDao<Post> {
             String sql = "SELECT * from posts where id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
-
-            return getPostByStatement(preparedStatement);
-        } catch (SQLException e) {
-            throw new DbException("Can't get post from DB.", e);
-        }
-    }
-
-    @Override
-    public Post get(String name) {
-        try {
-            String sql = "SELECT * from posts where name = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, name);
 
             return getPostByStatement(preparedStatement);
         } catch (SQLException e) {
@@ -63,7 +50,7 @@ public class PostDaoImpl implements PostDao<Post> {
                         resultSet.getString("category"),
                         resultSet.getString("content"),
                         resultSet.getInt("author_id"),
-                        resultSet.getDate("add_date"),
+                        resultSet.getTimestamp("add_date"),
                         resultSet.getInt("likes")
                 );
             }
@@ -88,7 +75,7 @@ public class PostDaoImpl implements PostDao<Post> {
                                     resultSet.getString("category"),
                                     resultSet.getString("content"),
                                     resultSet.getInt("author_id"),
-                                    resultSet.getDate("add_date"),
+                                    resultSet.getTimestamp("add_date"),
                                     resultSet.getInt("likes")
                             )
                     );
@@ -118,7 +105,7 @@ public class PostDaoImpl implements PostDao<Post> {
                                     resultSet.getString("category"),
                                     resultSet.getString("content"),
                                     resultSet.getInt("author_id"),
-                                    resultSet.getDate("add_date"),
+                                    resultSet.getTimestamp("add_date"),
                                     resultSet.getInt("likes")
                             )
                     );
@@ -161,12 +148,44 @@ public class PostDaoImpl implements PostDao<Post> {
             preparedStatement.setString(2, post.getCategory());
             preparedStatement.setString(3, post.getContent());
             preparedStatement.setInt(4, post.getAuthorId());
-            preparedStatement.setDate(5, post.getDate());
+            preparedStatement.setTimestamp(5, post.getDate());
             preparedStatement.setInt(6, post.getLikes());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DbException("Can't save user into DB.", e);
+        }
+    }
+
+    @Override
+    public void update(Post post, int id) {
+        String sql = "update posts set name=?, category=?, content=?, author_id=?, add_date=?, likes=? where id=?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, post.getName());
+            preparedStatement.setString(2, post.getCategory());
+            preparedStatement.setString(3, post.getContent());
+            preparedStatement.setInt(4, post.getAuthorId());
+            preparedStatement.setTimestamp(5, post.getDate());
+            preparedStatement.setInt(6, post.getLikes());
+            preparedStatement.setInt(7, id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't save post into DB.", e);
+        }
+    }
+
+    @Override
+    public void remove(Post post) {
+        String sql = "delete from posts where id=?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, post.getId());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't delete post from DB.", e);
         }
     }
 
@@ -208,7 +227,7 @@ public class PostDaoImpl implements PostDao<Post> {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DbException("Can't save post into DB.", e);
+            throw new DbException("Can't update post into DB.", e);
         }
     }
 }

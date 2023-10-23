@@ -1,16 +1,14 @@
 package ru.kpfu.itis.lobanov.model.dao;
 
+import ru.kpfu.itis.lobanov.model.entity.Post;
+
 import java.util.List;
 
-public interface PostDao<T> {
-    T get(int id);
-    T get(String name);
-    T get(String name, int authorId);
-    List<T> getAll();
-    List<T> getAllFromUser(int authorId);
-    List<T> getAllFavouritesFromUser(int user_id);
-    void save(T t);
-    void saveToFavourites(int user_id, int post_id);
-    void removeFromFavourites(int user_id, int post_id);
+public interface PostDao extends Dao<Post> {
+    Post get(String name, int authorId);
+    List<Post> getAllFromUser(int authorId);
+    List<Post> getAllFavouritesFromUser(int userId);
+    void saveToFavourites(int userId, int postId);
+    void removeFromFavourites(int userId, int postId);
     void updateLikes(String name, int likes);
 }

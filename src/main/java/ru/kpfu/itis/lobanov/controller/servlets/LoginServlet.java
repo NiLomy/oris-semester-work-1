@@ -1,5 +1,6 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
+import ru.kpfu.itis.lobanov.model.service.UserService;
 import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
 import ru.kpfu.itis.lobanov.util.PasswordUtil;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
@@ -15,7 +16,7 @@ import java.io.IOException;
 
 @WebServlet(name = "loginServlet", urlPatterns = "/login")
 public class LoginServlet extends HttpServlet {
-    private UserServiceImpl userService;
+    private UserService userService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {

@@ -1,4 +1,3 @@
-<html lang="en">
 <#include "base.ftl">
 
 <#macro scripts>
@@ -82,4 +81,3 @@
         </section>
     </div>
 </#macro>
-</html>

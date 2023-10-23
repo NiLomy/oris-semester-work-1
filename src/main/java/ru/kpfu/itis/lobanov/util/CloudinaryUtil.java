@@ -18,4 +18,6 @@ public class CloudinaryUtil {
         }
         return cloudinary;
     }
+
+    private CloudinaryUtil(){}
 }

@@ -1,5 +1,3 @@
-<html lang="en">
-
 <#include "base.ftl">
 
 <#macro scripts>
@@ -39,7 +37,6 @@
                                 </div>
                                 <div class="flex-grow-1 ms-3">
                                     <h5 class="mb-1">${anotherUser.login}</h5>
-                                    <#--                                    <p class="mb-2 pb-1" style="color: #2b2a2a;">Senior Journalist</p>-->
                                     <p class="mb-2 pb-1" style="color: #2b2a2a;">Email: ${anotherUser.email}</p>
                                     <#if anotherUser.aboutMe? has_content>
                                         <div class="d-flex justify-content-start rounded-3 p-2 mb-2 text-wrap"
@@ -49,10 +46,6 @@
                                             </p>
                                         </div>
                                     </#if>
-                                    <#--                                    <div class="d-flex pt-1">-->
-                                    <#--                                        <button type="button" class="btn btn-outline-primary me-1 flex-grow-1">Chat</button>-->
-                                    <#--                                        <button type="button" class="btn btn-primary flex-grow-1">Follow</button>-->
-                                    <#--                                    </div>-->
                                 </div>
                             </div>
                         </div>

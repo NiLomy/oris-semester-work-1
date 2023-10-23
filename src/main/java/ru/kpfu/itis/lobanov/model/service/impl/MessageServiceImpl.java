@@ -1,8 +1,8 @@
 package ru.kpfu.itis.lobanov.model.service.impl;
 
+import ru.kpfu.itis.lobanov.model.dao.MessageDao;
 import ru.kpfu.itis.lobanov.model.dao.UserDao;
 import ru.kpfu.itis.lobanov.model.dao.impl.MessageDaoImpl;
-import ru.kpfu.itis.lobanov.model.dao.impl.PostDaoImpl;
 import ru.kpfu.itis.lobanov.model.dao.impl.UserDaoImpl;
 import ru.kpfu.itis.lobanov.model.entity.Message;
 import ru.kpfu.itis.lobanov.model.entity.User;
@@ -10,13 +10,13 @@ import ru.kpfu.itis.lobanov.model.service.MessageService;
 import ru.kpfu.itis.lobanov.util.dto.MessageDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MessageServiceImpl implements MessageService {
-    public final MessageDaoImpl messageDao = new MessageDaoImpl();
-    private final UserDao<User> userDao = new UserDaoImpl();
+    public final MessageDao messageDao = new MessageDaoImpl();
+    private final UserDao userDao = new UserDaoImpl();
 
     @Override
     public MessageDto get(int id) {
@@ -34,7 +34,8 @@ public class MessageServiceImpl implements MessageService {
         );
     }
 
-    public MessageDto get(String author, String content, String post, Date date, int likes) {
+    @Override
+    public MessageDto get(String author, String content, String post, Timestamp date, int likes) {
         User user = userDao.get(author);
         Message message = messageDao.get(user.getId(), content, post, date, likes);
         if (message == null) return null;
@@ -98,6 +99,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public UserDto getMostFrequentUser() {
         User user = userDao.get(messageDao.getMostFrequentUserId());
+        if (user == null) return null;
         return new UserDto(
                 user.getName(),
                 user.getLastname(),

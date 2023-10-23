@@ -2,6 +2,7 @@ package ru.kpfu.itis.lobanov.controller.servlets;
 
 import com.cloudinary.Cloudinary;
 import ru.kpfu.itis.lobanov.model.entity.User;
+import ru.kpfu.itis.lobanov.model.service.UserService;
 import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
 import ru.kpfu.itis.lobanov.util.CloudinaryUtil;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
@@ -15,18 +16,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "editProfileServlet", urlPatterns = "/edit_profile")
+@WebServlet(name = "editProfileServlet", urlPatterns = "/edit-profile")
 @MultipartConfig(
         maxFileSize = 5 * 1024 * 1024,
         maxRequestSize = 10 * 1024 * 1024
 )
 public class EditProfileServlet extends HttpServlet {
-    private UserServiceImpl userService;
+    private UserService userService;
     private final Cloudinary cloudinary = CloudinaryUtil.getInstance();
 
     @Override
@@ -37,7 +37,7 @@ public class EditProfileServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("WEB-INF/view/edit_profile.ftl").forward(req, resp);
+        req.getRequestDispatcher("WEB-INF/view/edit-profile.ftl").forward(req, resp);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class EditProfileServlet extends HttpServlet {
     }
 
     private void updatePhoto(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Part part = req.getPart("file");
+        Part part = req.getPart("file" );
         String filename = Paths.get(part.getSubmittedFileName()).getFileName().toString();
 
 //        File file = new File(FILE_PATH_PREFIX + File.separator

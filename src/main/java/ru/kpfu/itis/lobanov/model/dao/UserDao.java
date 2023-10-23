@@ -1,15 +1,13 @@
 package ru.kpfu.itis.lobanov.model.dao;
 
+import ru.kpfu.itis.lobanov.model.entity.User;
+
 import java.util.List;
 
-public interface UserDao<T> {
-    T get(int id);
-    T get(String nickname);
-    T get(String login, String password);
-    List<T> getAll();
+public interface UserDao extends Dao<User> {
+    User get(String nickname);
+    User get(String login, String password);
     String getEmail(String login, String password);
-    void save(T t);
-    void update(T t, String oldLogin);
     void updateImageUrl(String nickName, String imageUrl);
     void updatePassword(String nickName, String password);
 }

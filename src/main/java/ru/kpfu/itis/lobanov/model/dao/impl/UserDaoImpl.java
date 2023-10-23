@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoImpl implements UserDao<User> {
+public class UserDaoImpl implements UserDao {
     private final Connection connection = DatabaseConnectionProvider.getConnection();
 
     @Override
@@ -142,8 +142,8 @@ public class UserDaoImpl implements UserDao<User> {
     }
 
     @Override
-    public void update(User user, String oldLogin) {
-        String sql = "update users set name=?, lastname=?, email=?, login=?, about_me=? where login=?;";
+    public void update(User user, int id) {
+        String sql = "update users set name=?, lastname=?, email=?, login=?, about_me=? where id=?;";
         try {
             String s = user.getAboutMe();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -152,7 +152,7 @@ public class UserDaoImpl implements UserDao<User> {
             preparedStatement.setString(3, user.getEmail());
             preparedStatement.setString(4, user.getLogin());
             preparedStatement.setString(5, user.getAboutMe());
-            preparedStatement.setString(6, oldLogin);
+            preparedStatement.setInt(6, id);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -185,6 +185,19 @@ public class UserDaoImpl implements UserDao<User> {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DbException("Can't save user into DB.", e);
+        }
+    }
+
+    @Override
+    public void remove(User user) {
+        String sql = "delete from users where id=?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, user.getId());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't delete user from DB.", e);
         }
     }
 }

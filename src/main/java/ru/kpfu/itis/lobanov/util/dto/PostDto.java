@@ -1,17 +1,18 @@
 package ru.kpfu.itis.lobanov.util.dto;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.Objects;
 
 public class PostDto {
     private String name;
     private String category;
     private String content;
     private String author;
-    private Date date;
+    private Timestamp date;
     private int likes;
     private String authorImageUrl;
 
-    public PostDto(String name, String category, String content, String author, Date date, int likes, String authorImageUrl) {
+    public PostDto(String name, String category, String content, String author, Timestamp date, int likes, String authorImageUrl) {
         this.name = name;
         this.category = category;
         this.content = content;
@@ -19,6 +20,34 @@ public class PostDto {
         this.date = date;
         this.likes = likes;
         this.authorImageUrl = authorImageUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PostDto postDto = (PostDto) o;
+
+        if (likes != postDto.likes) return false;
+        if (!name.equals(postDto.name)) return false;
+        if (!category.equals(postDto.category)) return false;
+        if (!content.equals(postDto.content)) return false;
+        if (!author.equals(postDto.author)) return false;
+        if (!date.equals(postDto.date)) return false;
+        return Objects.equals(authorImageUrl, postDto.authorImageUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + category.hashCode();
+        result = 31 * result + content.hashCode();
+        result = 31 * result + author.hashCode();
+        result = 31 * result + date.hashCode();
+        result = 31 * result + likes;
+        result = 31 * result + (authorImageUrl != null ? authorImageUrl.hashCode() : 0);
+        return result;
     }
 
     public String getName() {
@@ -53,11 +82,11 @@ public class PostDto {
         this.author = author;
     }
 
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

@@ -7,7 +7,7 @@ import ru.kpfu.itis.lobanov.model.service.MessageLikeService;
 import ru.kpfu.itis.lobanov.util.dto.MessageLikeDto;
 
 public class MessageLikeServiceImpl implements MessageLikeService {
-    private final MessageLikeDao<MessageLike> messageLikeDao = new MessageLikeDaoImpl();
+    private final MessageLikeDao messageLikeDao = new MessageLikeDaoImpl();
 
     @Override
     public MessageLikeDto get(int id) {

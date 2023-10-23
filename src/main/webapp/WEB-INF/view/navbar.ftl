@@ -25,7 +25,7 @@
                 <#if currentUser?has_content>
                     <div class="dropdown">
                         <div id="dropdownProfileImage" style="cursor: pointer" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img id="navProfileImage" src="${currentUser.imageUrl}" class="rounded-circle" height="25" alt="Profile picture" loading="lazy"/>
+                            <img id="navProfileImage" src="${currentUser.imageUrl}" class="rounded-circle shadow-1-strong" height="45" width="45" alt="Profile picture" loading="lazy"/>
                             <span class="arrow"></span>
                         </div>
                         <ul id="navbar-dropdown" class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownProfileImage">

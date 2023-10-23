@@ -1,5 +1,3 @@
-<html lang="en">
-
 <#include "base.ftl">
 
 <#macro scripts>
@@ -147,15 +145,17 @@
                                 <div class="card" href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}">
                                     <div class="card-body p-4">
                                         <div class="d-flex flex-start">
-                                            <img class="rounded-circle shadow-1-strong me-3"
-                                                 src="${p.authorImageUrl}" alt="avatar" width="65"
-                                                 height="65" />
+                                            <a style="text-decoration: none; color: inherit" href="${pageContext}/another-profile?anotherUser=${p.author}">
+                                                <img class="rounded-circle shadow-1-strong me-3"
+                                                     src="${p.authorImageUrl}" alt="avatar" width="65"
+                                                     height="65" />
+                                            </a>
                                             <div class="flex-grow-1 flex-shrink-1">
                                                 <div>
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <a href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}">
+                                                        <a href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}" style="text-decoration: none; color: inherit">
                                                             <p class="post-name">
-                                                                ${p.name}
+                                                                <b>${p.name}</b>
                                                             </p>
                                                         </a>
                                                         <p class="category">
@@ -164,7 +164,7 @@
                                                     </div>
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <p class="mb-1">
-                                                            ${p.author} <span class="small">- ${p.date}</span>
+                                                            <a style="text-decoration: none; color: inherit" href="${pageContext}/another-profile?anotherUser=${p.author}">${p.author}</a> <span class="small">- ${p.date}</span>
                                                         </p>
                                                     </div>
                                                     <div class="small d-flex justify-content-start">
@@ -185,4 +185,3 @@
         </#if>
     </div>
 </#macro>
-</html>

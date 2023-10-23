@@ -34,7 +34,7 @@ public class LogoutServlet extends HttpServlet {
         try {
             resp.sendRedirect(getServletContext().getContextPath() + "/login");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Can't redirect to this site");
         }
     }
 }

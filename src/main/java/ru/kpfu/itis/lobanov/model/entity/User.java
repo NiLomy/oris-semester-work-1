@@ -66,21 +66,25 @@ public class User {
         User user = (User) o;
 
         if (id != user.id) return false;
-        if (!Objects.equals(name, user.name)) return false;
-        if (!Objects.equals(lastname, user.lastname)) return false;
+        if (!name.equals(user.name)) return false;
+        if (!lastname.equals(user.lastname)) return false;
         if (!email.equals(user.email)) return false;
         if (!login.equals(user.login)) return false;
-        return Objects.equals(password, user.password);
+        if (!password.equals(user.password)) return false;
+        if (!Objects.equals(imageUrl, user.imageUrl)) return false;
+        return Objects.equals(aboutMe, user.aboutMe);
     }
 
     @Override
     public int hashCode() {
         int result = id;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (lastname != null ? lastname.hashCode() : 0);
+        result = 31 * result + name.hashCode();
+        result = 31 * result + lastname.hashCode();
         result = 31 * result + email.hashCode();
         result = 31 * result + login.hashCode();
-        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + password.hashCode();
+        result = 31 * result + (imageUrl != null ? imageUrl.hashCode() : 0);
+        result = 31 * result + (aboutMe != null ? aboutMe.hashCode() : 0);
         return result;
     }
 

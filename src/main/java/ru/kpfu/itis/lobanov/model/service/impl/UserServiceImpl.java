@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
-
-    private final UserDao<User> userDao = new UserDaoImpl();
+    private final UserDao userDao = new UserDaoImpl();
 
     @Override
     public UserDto get(int id) {
@@ -60,7 +59,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean update(User user, String oldLogin) {
         try {
-            userDao.update(user, oldLogin);
+            User currentUser = userDao.get(oldLogin);
+            userDao.update(user, currentUser.getId());
             return true;
         } catch (DbException e) {
             return false;
@@ -92,6 +92,7 @@ public class UserServiceImpl implements UserService {
         return getAll().stream().noneMatch(userDto -> userDto.getEmail().equals(email));
     }
 
+    @Override
     public boolean isNicknameUnique(String nickname) {
         return getAll().stream().noneMatch(userDto -> userDto.getLogin().equals(nickname));
     }
@@ -107,23 +108,5 @@ public class UserServiceImpl implements UserService {
         Cookie cookie = new Cookie("user", user.getLogin());
         cookie.setMaxAge(24 * 3_600);
         resp.addCookie(cookie);
-    }
-
-    @Override
-    public boolean isRemembered(HttpServletRequest req, HttpServletResponse resp) {
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                if (c.getName().equals("user")) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void auth(UserDto user) {
-
     }
 }

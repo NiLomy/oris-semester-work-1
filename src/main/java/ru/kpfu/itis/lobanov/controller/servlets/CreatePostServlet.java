@@ -1,8 +1,10 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
+import ru.kpfu.itis.lobanov.model.dao.UserDao;
 import ru.kpfu.itis.lobanov.model.dao.impl.UserDaoImpl;
 import ru.kpfu.itis.lobanov.model.entity.Post;
 import ru.kpfu.itis.lobanov.model.entity.User;
+import ru.kpfu.itis.lobanov.model.service.PostService;
 import ru.kpfu.itis.lobanov.model.service.impl.PostServiceImpl;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
@@ -14,12 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 
 @WebServlet(urlPatterns = "/create-post")
 public class CreatePostServlet extends HttpServlet {
-    private PostServiceImpl postService;
+    private PostService postService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -36,8 +38,8 @@ public class CreatePostServlet extends HttpServlet {
         String postName = req.getParameter("postName");
         String postCategory = req.getParameter("postCategory");
         String postText = req.getParameter("postText");
-        String stringDate = ZonedDateTime.now().toString().substring(0, 10);
-        Date date = Date.valueOf(stringDate);
+
+        Timestamp date = getDate();
 
         resp.setContentType("text/plain");
         if (postName.isEmpty()) {
@@ -62,7 +64,8 @@ public class CreatePostServlet extends HttpServlet {
         }
         HttpSession httpSession = req.getSession();
         UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
-        UserDaoImpl userDao = new UserDaoImpl();
+
+        UserDao userDao = new UserDaoImpl();
         User user = userDao.get(userDto.getLogin());
 
         postService.save(
@@ -75,7 +78,16 @@ public class CreatePostServlet extends HttpServlet {
                         0
                 )
         );
-//        httpSession.setAttribute("postName", postName);
+
         resp.sendRedirect(getServletContext().getContextPath() + "/post?postName=" + postName + "&postAuthor=" + user.getLogin());
+    }
+
+    private Timestamp getDate() {
+        String[] dateInput = ZonedDateTime.now().toString().split("T");
+        String[] timeInput = dateInput[1].split("\\.");
+        String stringDate = dateInput[0];
+        String stringTime = timeInput[0];
+
+        return Timestamp.valueOf(stringDate + " " + stringTime);
     }
 }

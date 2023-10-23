@@ -31,8 +31,9 @@ public class AnotherUserProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String nickname = req.getParameter("anotherUser");
         UserDto anotherUserDto = userService.get(nickname);
-        HttpSession httpSession = req.getSession();
         req.setAttribute("anotherUser", anotherUserDto);
+
+        HttpSession httpSession = req.getSession();
         UserDto currentUserDto = (UserDto) httpSession.getAttribute("currentUser");
 
         List<PostDto> posts = postService.getAllFromUser(nickname);

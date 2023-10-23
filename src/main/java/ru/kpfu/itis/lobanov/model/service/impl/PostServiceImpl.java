@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PostServiceImpl implements PostService {
-    private final PostDao<Post> postDao = new PostDaoImpl();
-    private final UserDao<User> userDao = new UserDaoImpl();
+    private final PostDao postDao = new PostDaoImpl();
+    private final UserDao userDao = new UserDaoImpl();
 
     @Override
     public PostDto get(int id) {
@@ -66,6 +66,7 @@ public class PostServiceImpl implements PostService {
         ).collect(Collectors.toList());
     }
 
+    @Override
     public List<PostDto> getAllFromUser(String nickname) {
         User currentUser = userDao.get(nickname);
         return postDao.getAllFromUser(currentUser.getId()).stream().map(
@@ -105,16 +106,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void saveToFavourites(String nickname, String postName) {
+    public void saveToFavourites(String nickname, String postName, String authorName) {
         User currentUser = userDao.get(nickname);
-        Post currentPost = postDao.get(postName);
+        User author = userDao.get(authorName);
+        Post currentPost = postDao.get(postName, author.getId());
         postDao.saveToFavourites(currentUser.getId(), currentPost.getId());
     }
 
     @Override
-    public void removeFromFavourites(String nickname, String postName) {
+    public void removeFromFavourites(String nickname, String postName, String authorName) {
         User currentUser = userDao.get(nickname);
-        Post currentPost = postDao.get(postName);
+        User author = userDao.get(authorName);
+        Post currentPost = postDao.get(postName, author.getId());
         postDao.removeFromFavourites(currentUser.getId(), currentPost.getId());
     }
 

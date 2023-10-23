@@ -1,5 +1,7 @@
 package ru.kpfu.itis.lobanov.util.dto;
 
+import java.util.Objects;
+
 public class UserDto {
     private String firstName;
     private String lastName;
@@ -34,6 +36,34 @@ public class UserDto {
         this.password = password;
         this.imageUrl = imageUrl;
         this.aboutMe = aboutMe;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserDto userDto = (UserDto) o;
+
+        if (!firstName.equals(userDto.firstName)) return false;
+        if (!lastName.equals(userDto.lastName)) return false;
+        if (!login.equals(userDto.login)) return false;
+        if (!email.equals(userDto.email)) return false;
+        if (!password.equals(userDto.password)) return false;
+        if (!Objects.equals(imageUrl, userDto.imageUrl)) return false;
+        return Objects.equals(aboutMe, userDto.aboutMe);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        result = 31 * result + login.hashCode();
+        result = 31 * result + email.hashCode();
+        result = 31 * result + password.hashCode();
+        result = 31 * result + (imageUrl != null ? imageUrl.hashCode() : 0);
+        result = 31 * result + (aboutMe != null ? aboutMe.hashCode() : 0);
+        return result;
     }
 
     public String getFirstName() {

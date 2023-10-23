@@ -1,12 +1,16 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
 import com.google.gson.Gson;
-import javafx.geometry.Pos;
+import ru.kpfu.itis.lobanov.model.dao.UserDao;
 import ru.kpfu.itis.lobanov.model.dao.impl.UserDaoImpl;
 import ru.kpfu.itis.lobanov.model.entity.Message;
 import ru.kpfu.itis.lobanov.model.entity.MessageLike;
 import ru.kpfu.itis.lobanov.model.entity.PostLike;
 import ru.kpfu.itis.lobanov.model.entity.User;
+import ru.kpfu.itis.lobanov.model.service.MessageLikeService;
+import ru.kpfu.itis.lobanov.model.service.MessageService;
+import ru.kpfu.itis.lobanov.model.service.PostLikeService;
+import ru.kpfu.itis.lobanov.model.service.PostService;
 import ru.kpfu.itis.lobanov.model.service.impl.MessageLikeServiceImpl;
 import ru.kpfu.itis.lobanov.model.service.impl.MessageServiceImpl;
 import ru.kpfu.itis.lobanov.model.service.impl.PostLikeServiceImpl;
@@ -23,16 +27,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 
-@WebServlet(urlPatterns = "/post")
+@WebServlet(name = "postServlet", urlPatterns = "/post")
 public class PostServlet extends HttpServlet {
-    private PostServiceImpl postService;
-    private MessageServiceImpl messageService;
-    private PostLikeServiceImpl postLikeService;
-    private MessageLikeServiceImpl messageLikeService;
+    private PostService postService;
+    private MessageService messageService;
+    private PostLikeService postLikeService;
+    private MessageLikeService messageLikeService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -49,17 +54,20 @@ public class PostServlet extends HttpServlet {
         PostDto postDto = postService.get(postName, postAuthor);
 
         List<MessageDto> messages = messageService.getAllFromPost(postName);
+        messages.sort(Comparator.comparing(MessageDto::getDate));
         req.setAttribute("messages", messages);
+
         HttpSession httpSession = req.getSession();
-        UserDto currentUser = (UserDto) httpSession.getAttribute("currentUser");
+        Object currentUser = httpSession.getAttribute("currentUser");
 
-        List<PostDto> posts = postService.getAllFavouriteFromUser(currentUser.getLogin());
-        boolean isFavourite = posts.stream().anyMatch(post -> post.getName().equals(postName));
+        if (currentUser != null) {
+            List<PostDto> posts = postService.getAllFavouriteFromUser(((UserDto) currentUser).getLogin());
+            boolean isFavourite = posts.stream().anyMatch(post -> post.getName().equals(postName));
 
-        if (isFavourite) req.setAttribute("isFavourite", true);
+            if (isFavourite) req.setAttribute("isFavourite", true);
+        }
 
         httpSession.setAttribute("currentPost", postDto);
-
         req.getRequestDispatcher("WEB-INF/view/post.ftl").forward(req, resp);
     }
 
@@ -68,7 +76,7 @@ public class PostServlet extends HttpServlet {
         String action = req.getParameter("action");
 
         if (action.equals("sendMessage")) sendMessage(req, resp);
-        if (action.equals("pressLike")) pressLike(req, resp);
+        if (action.equals("pressLike")) pressPostLike(req, resp);
         if (action.equals("pressMessageLike")) pressMessageLike(req, resp);
         if (action.equals("pressFavourite")) pressFavourite(req, resp);
         if (action.equals("pressUnfavourite")) pressUnfavourite(req, resp);
@@ -76,8 +84,7 @@ public class PostServlet extends HttpServlet {
 
     private void sendMessage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String newMessage = req.getParameter("newMessage");
-        String stringDate = ZonedDateTime.now().toString().substring(0, 10);
-        Date date = Date.valueOf(stringDate);
+        Timestamp date = getDate();
 
         if (newMessage == null) {
             resp.setContentType("text/plain");
@@ -86,7 +93,7 @@ public class PostServlet extends HttpServlet {
             HttpSession httpSession = req.getSession();
             PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
             UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
-            UserDaoImpl userDao = new UserDaoImpl();
+            UserDao userDao = new UserDaoImpl();
             User user = userDao.get(userDto.getLogin());
 
             messageService.save(new Message(
@@ -95,12 +102,13 @@ public class PostServlet extends HttpServlet {
             MessageDto messageDto = messageService.get(user.getLogin(), newMessage, postDto.getName(), date, 0);
             resp.setContentType("application/json");
             String json = new Gson().toJson(messageDto);
+            json = json.replace("id", "messageID");
             json = json.replace("content", "messageContent");
             resp.getWriter().write(json);
         }
     }
 
-    private void pressLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void pressPostLike(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession httpSession = req.getSession();
         PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
         UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
@@ -148,7 +156,7 @@ public class PostServlet extends HttpServlet {
         PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
         UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
 
-        postService.saveToFavourites(userDto.getLogin(), postDto.getName());
+        postService.saveToFavourites(userDto.getLogin(), postDto.getName(), postDto.getAuthor());
     }
 
     private void pressUnfavourite(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -156,6 +164,15 @@ public class PostServlet extends HttpServlet {
         PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
         UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
 
-        postService.removeFromFavourites(userDto.getLogin(), postDto.getName());
+        postService.removeFromFavourites(userDto.getLogin(), postDto.getName(), postDto.getAuthor());
+    }
+
+    private Timestamp getDate() {
+        String[] dateInput = ZonedDateTime.now().toString().split("T");
+        String[] timeInput = dateInput[1].split("\\.");
+        String stringDate = dateInput[0];
+        String stringTime = timeInput[0];
+
+        return Timestamp.valueOf(stringDate + " " + stringTime);
     }
 }

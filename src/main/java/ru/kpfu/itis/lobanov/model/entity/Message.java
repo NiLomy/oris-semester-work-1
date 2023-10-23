@@ -1,17 +1,16 @@
 package ru.kpfu.itis.lobanov.model.entity;
 
-import java.sql.Date;
-import java.util.Objects;
+import java.sql.Timestamp;
 
 public class Message {
     private int id;
     private int authorId;
     private String content;
     private String post;
-    private Date date;
+    private Timestamp date;
     private int likes;
 
-    public Message(int authorId, String content, String post, Date date, int likes) {
+    public Message(int authorId, String content, String post, Timestamp date, int likes) {
         this.authorId = authorId;
         this.content = content;
         this.post = post;
@@ -19,7 +18,7 @@ public class Message {
         this.likes = likes;
     }
 
-    public Message(int id, int authorId, String content, String post, Date date, int likes) {
+    public Message(int id, int authorId, String content, String post, Timestamp date, int likes) {
         this.id = id;
         this.authorId = authorId;
         this.content = content;
@@ -86,11 +85,11 @@ public class Message {
         this.post = post;
     }
 
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

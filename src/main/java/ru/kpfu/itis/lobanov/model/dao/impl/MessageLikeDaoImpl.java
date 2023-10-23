@@ -9,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageLikeDaoImpl implements MessageLikeDao<MessageLike> {
+public class MessageLikeDaoImpl implements MessageLikeDao {
     private final Connection connection = DatabaseConnectionProvider.getConnection();
     @Override
     public MessageLike get(int id) {
@@ -115,6 +115,21 @@ public class MessageLikeDaoImpl implements MessageLikeDao<MessageLike> {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DbException("Can't save post like into DB.", e);
+        }
+    }
+
+    @Override
+    public void update(MessageLike messageLike, int id) {
+        String sql = "update likes_for_messages set author=?, message_id=? where id=?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, messageLike.getAuthor());
+            preparedStatement.setInt(2, messageLike.getMessageId());
+            preparedStatement.setInt(3, id);
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DbException("Can't update message into DB.", e);
         }
     }
 
