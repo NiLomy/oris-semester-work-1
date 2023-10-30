@@ -111,6 +111,9 @@
                             } else if (response === "emptyPostText") {
                                 $("#post-text-error").text("You should enter post text");
                                 $("#post-text").addClass("is-invalid");
+                            } else if (response === "postAlreadyExist") {
+                                $("#post-name-error").text("You already have such post. Please write about something else");
+                                $("#post-name").addClass("is-invalid");
                             } else {
                                 window.location.replace("${pageContext}/post?postName=" + postName + "&postAuthor=" + "${currentUser.login}");
                             }

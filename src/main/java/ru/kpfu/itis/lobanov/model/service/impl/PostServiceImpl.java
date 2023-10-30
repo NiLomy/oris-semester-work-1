@@ -125,4 +125,10 @@ public class PostServiceImpl implements PostService {
     public void updateLikes(String name, int likes) {
         postDao.updateLikes(name, likes);
     }
+
+    @Override
+    public boolean isPostUnique(String author, String postName) {
+        PostDto post = get(postName, author);
+        return post == null;
+    }
 }

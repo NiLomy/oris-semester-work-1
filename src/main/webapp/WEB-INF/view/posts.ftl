@@ -52,6 +52,10 @@
             $("#anauth-create-post").click(function () {
                 alert("To create posts you should be logged in");
             });
+
+            $("#anauth-create-post-about-this").click(function () {
+                alert("To create posts you should be logged in");
+            });
         });
 
         function performTextSearch() {
@@ -134,9 +138,15 @@
             <section class="gradient-custom all-posts">
                 <div id="nothing-found" style="display: none">
                     <p >No results found</p>
-                    <a class="btn btn-primary me-1 flex-grow-1" href="${pageContext}/create-post">
-                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Create new post about this
-                    </a>
+                    <#if currentUser? has_content>
+                        <a class="btn btn-primary me-1 flex-grow-1" href="${pageContext}/create-post">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Create new post about this
+                        </a>
+                    <#else>
+                        <a id="anauth-create-post-about-this" class="btn btn-primary me-1 flex-grow-1">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Create new post about this
+                        </a>
+                    </#if>
                 </div>
                 <#list posts as p>
                     <div class="container my-1 py-1 a-post">

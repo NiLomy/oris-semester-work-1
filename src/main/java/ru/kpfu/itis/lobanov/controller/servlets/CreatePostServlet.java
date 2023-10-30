@@ -65,6 +65,11 @@ public class CreatePostServlet extends HttpServlet {
         HttpSession httpSession = req.getSession();
         UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
 
+        if (!postService.isPostUnique(userDto.getLogin(), postName)) {
+            resp.getWriter().write("postAlreadyExist");
+            return;
+        }
+
         UserDao userDao = new UserDaoImpl();
         User user = userDao.get(userDto.getLogin());
 

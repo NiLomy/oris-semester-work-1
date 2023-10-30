@@ -31,7 +31,7 @@
                             $("#nickname").addClass("is-invalid");
                             $("#password").addClass("is-invalid");
                         } else {
-                            window.location.replace("${pageContext}/home")
+                            window.location.replace("${pageContext}/")
                         }
                     }
                 )

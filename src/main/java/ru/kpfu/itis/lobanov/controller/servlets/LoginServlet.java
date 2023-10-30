@@ -45,7 +45,8 @@ public class LoginServlet extends HttpServlet {
             if (isRemembered != null && isRemembered.equals("on")) {
                 userService.remember(userDto, req, resp);
             }
-            resp.sendRedirect(getServletContext().getContextPath() + "/home");
+            resp.setContentType("text/plain");
+            resp.getWriter().write("validInput");
         }
     }
 }

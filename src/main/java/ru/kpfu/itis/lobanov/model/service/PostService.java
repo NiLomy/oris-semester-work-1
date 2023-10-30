@@ -15,4 +15,5 @@ public interface PostService {
     void saveToFavourites(String nickname, String postName, String authorName);
     void removeFromFavourites(String nickname, String postName, String authorName);
     void updateLikes(String name, int likes);
+    boolean isPostUnique(String author, String postName);
 }

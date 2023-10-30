@@ -260,7 +260,7 @@
                                 $("#nickname-error").text("User with this nickname is already registered");
                                 $("#nickname").addClass("is-invalid");
                             } else {
-                                window.location.replace("${pageContext}/home");
+                                window.location.replace("${pageContext}/");
                             }
                         }
                     )

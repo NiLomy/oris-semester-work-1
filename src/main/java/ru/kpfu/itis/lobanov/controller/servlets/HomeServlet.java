@@ -15,9 +15,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.Comparator;
-import java.util.List;
 
-@WebServlet(name = "homeServlet", urlPatterns = "/")
+@WebServlet(name = "homeServlet", urlPatterns = "")
 public class HomeServlet extends HttpServlet {
     private UserService userService;
     private MessageService messageService;
