@@ -7,7 +7,12 @@ import ru.kpfu.itis.lobanov.model.service.PostLikeService;
 import ru.kpfu.itis.lobanov.util.dto.PostLikeDto;
 
 public class PostLikeServiceImpl implements PostLikeService {
-    private final PostLikeDao postLikeDao = new PostLikeDaoImpl();
+    private final PostLikeDao postLikeDao;
+
+    public PostLikeServiceImpl(PostLikeDao postLikeDao) {
+        this.postLikeDao = postLikeDao;
+    }
+
     @Override
     public PostLikeDto get(int id) {
         PostLike postLike = postLikeDao.get(id);

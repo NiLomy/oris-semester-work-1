@@ -1,5 +1,10 @@
 package ru.kpfu.itis.lobanov.util;
 
+import ru.kpfu.itis.lobanov.util.configurations.ConfigProvider;
+import ru.kpfu.itis.lobanov.util.configurations.DatabaseConfigProvider;
+import ru.kpfu.itis.lobanov.util.constants.LogMessages;
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
+import ru.kpfu.itis.lobanov.util.exception.ConfigException;
 import ru.kpfu.itis.lobanov.util.exception.DbException;
 
 import java.sql.Connection;
@@ -8,27 +13,28 @@ import java.sql.SQLException;
 
 public class DatabaseConnectionProvider {
     public static final String DRIVER = "org.postgresql.Driver";
-    public static final String URL = "jdbc:postgresql://localhost:5432/religious studying";
-    public static final String USER = "postgres";
-    public static final String PASSWORD = "nikita2004";
 
     private static Connection connection;
 
     public static Connection getConnection() throws DbException {
         if (connection == null) {
             try {
+                ConfigProvider configProvider = new DatabaseConfigProvider();
                 Class.forName(DRIVER);
                 connection = DriverManager.getConnection(
-                        URL,
-                        USER,
-                        PASSWORD
+                        configProvider.readData(ServerResources.DB_URL_KEY),
+                        configProvider.readData(ServerResources.DB_USER_KEY),
+                        configProvider.readData(ServerResources.DB_PASSWORD_KEY)
                 );
             } catch (SQLException | ClassNotFoundException e) {
-                throw new DbException("Cannot connect to DB.", e);
+                throw new DbException(LogMessages.ESTABLISH_CONNECTION_DB_EXCEPTION, e);
+            } catch (ConfigException e) {
+                throw new DbException(LogMessages.GET_CONFIGURATION_DB_EXCEPTION, e);
             }
         }
         return connection;
     }
 
-    private DatabaseConnectionProvider() {}
+    private DatabaseConnectionProvider() {
+    }
 }

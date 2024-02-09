@@ -63,12 +63,13 @@
                                 <div class="container my-1 py-1 a-post">
                                     <div class="row d-flex justify-content-center">
                                         <div class="col-md-12 col-lg-10 col-xl-8">
-                                            <div class="card" href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}">
+                                            <div class="card"
+                                                 href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}">
                                                 <div class="card-body p-4">
                                                     <div class="d-flex flex-start">
                                                         <img class="rounded-circle shadow-1-strong me-3"
                                                              src="${p.authorImageUrl}" alt="avatar" width="65"
-                                                             height="65" />
+                                                             height="65"/>
                                                         <div class="flex-grow-1 flex-shrink-1">
                                                             <div>
                                                                 <div class="d-flex justify-content-between align-items-center">
@@ -83,7 +84,8 @@
                                                                 </div>
                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                     <p class="mb-1">
-                                                                        ${p.author} <span class="small">- ${p.date}</span>
+                                                                        ${p.author} <span
+                                                                                class="small">- ${p.date}</span>
                                                                     </p>
                                                                 </div>
                                                                 <div class="small d-flex justify-content-start">

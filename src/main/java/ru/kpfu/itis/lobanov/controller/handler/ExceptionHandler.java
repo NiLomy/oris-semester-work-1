@@ -1,5 +1,7 @@
 package ru.kpfu.itis.lobanov.controller.handler;
 
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -7,8 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet("/handle")
+@WebServlet(ServerResources.EXCEPTION_HANDLER_URL)
 public class ExceptionHandler extends HttpServlet {
+    public static final String SERVLET_EXCEPTION = "javax.servlet.error.exception";
+    public static final String SERVLET_STATUS_CODE = "javax.servlet.error.status_code";
+    public static final String SERVLET_REQUEST_URL = "javax.servlet.error.request_url";
+    public static final String STATUS_CODE = "statusCode";
+    public static final String URI = "uri";
+    public static final String MESSAGE = "message";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -16,16 +24,16 @@ public class ExceptionHandler extends HttpServlet {
     }
 
     private void handleException(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Throwable throwable = (Throwable) req.getAttribute("javax.servlet.error.exception");
-        Integer code = (Integer) req.getAttribute("javax.servlet.error.status_code");
-        String uri = (String) req.getAttribute("javax.servlet.error.request_url");
+        Integer code = (Integer) req.getAttribute(SERVLET_STATUS_CODE);
+        String uri = (String) req.getAttribute(SERVLET_REQUEST_URL);
+        Throwable throwable = (Throwable) req.getAttribute(SERVLET_EXCEPTION);
 
-        req.setAttribute("statusCode", code);
-        req.setAttribute("uri", uri == null ? "" : uri);
+        req.setAttribute(STATUS_CODE, code);
+        req.setAttribute(URI, uri == null ? "" : uri);
         if (code == 500) {
-            req.setAttribute("message", throwable.getMessage());
+            req.setAttribute(MESSAGE, throwable.getMessage());
         }
 
-        req.getRequestDispatcher("WEB-INF/view/exception.ftl").forward(req, resp);
+        req.getRequestDispatcher(ServerResources.EXCEPTION_PAGE).forward(req, resp);
     }
 }

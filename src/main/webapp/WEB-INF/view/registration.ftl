@@ -3,8 +3,8 @@
 <#macro scripts>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script>
-        $(function(){
-            $("#remember-me").change(function(){
+        $(function () {
+            $("#remember-me").change(function () {
                 let rememberMe = $("#remember-me");
                 if (rememberMe.val() === "off") {
                     rememberMe.val("on");
@@ -285,21 +285,36 @@
                 <div class="row d-flex justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-4">
                         <div class="card">
-                            <div class="card-body p-4" style="text-align: left" >
-                                <label for="name">Name: </label><input type="text" name="name" class="form-control" id="name" placeholder="Name" required>
+                            <div class="card-body p-4" style="text-align: left">
+                                <label for="name">Name: </label><input type="text" name="name" class="form-control"
+                                                                       id="name" placeholder="Name" required>
                                 <p id="name-error" class="invalid-feedback d-block" role="alert"></p>
-                                <label for="lastname">Lastname: </label><input type="text" name="lastname" class="form-control" id="lastname" placeholder="Lastname" required>
+                                <label for="lastname">Lastname: </label><input type="text" name="lastname"
+                                                                               class="form-control" id="lastname"
+                                                                               placeholder="Lastname" required>
                                 <p id="lastname-error" class="invalid-feedback d-block" role="alert"></p>
-                                <label for="email">Email: </label><input type="email" name="email" class="form-control" id="email" placeholder="Email@example.com" required>
+                                <label for="email">Email: </label><input type="email" name="email" class="form-control"
+                                                                         id="email" placeholder="Email@example.com"
+                                                                         required>
                                 <p id="email-error" class="invalid-feedback d-block" role="alert"></p>
-                                <label for="nickname">Nickname:</label><input type="text" name="nickname" class="form-control" id="nickname" placeholder="Nickname" required>
+                                <label for="nickname">Nickname:</label><input type="text" name="nickname"
+                                                                              class="form-control" id="nickname"
+                                                                              placeholder="Nickname" required>
                                 <p id="nickname-error" class="invalid-feedback d-block" role="alert"></p>
-                                <label for="password">Password:</label><input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
+                                <label for="password">Password:</label><input type="password" name="password"
+                                                                              class="form-control" id="password"
+                                                                              placeholder="Password" required>
                                 <p id="password-error" class="invalid-feedback d-block" role="alert"></p>
-                                <label for="confirm-password">Repeat password:</label><input type="password" name="confirm-password" class="form-control" id="confirm-password" placeholder="Confirm password" required>
+                                <label for="confirm-password">Repeat password:</label><input type="password"
+                                                                                             name="confirm-password"
+                                                                                             class="form-control"
+                                                                                             id="confirm-password"
+                                                                                             placeholder="Confirm password"
+                                                                                             required>
                                 <p id="confirm-password-error" class="invalid-feedback d-block" role="alert"></p>
                                 <div style="text-align: center">
-                                    <input id="remember-me" class="form-check-input" type="checkbox" value="off" name="remember_me">
+                                    <input id="remember-me" class="form-check-input" type="checkbox" value="off"
+                                           name="remember_me">
                                     <label class="form-check-label" for="remember_me">Remember me</label>
                                     <br>
                                     <br>

@@ -7,7 +7,10 @@ import java.util.List;
 
 public interface MessageDao extends Dao<Message> {
     Message get(int authorId, String content, String post, Timestamp date, int likes);
+
     List<Message> getAllFromPost(String post);
+
     void updateLikes(int id, int likes);
+
     int getMostFrequentUserId();
 }

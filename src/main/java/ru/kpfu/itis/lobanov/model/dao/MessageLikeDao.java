@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface MessageLikeDao extends Dao<MessageLike> {
     MessageLike get(String author, int messageId);
+
     List<MessageLike> getAllFromMessage(int messageId);
 }

@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface PostLikeDao extends Dao<PostLike> {
     PostLike get(String nickname, String post);
+
     List<PostLike> getAllFromPost(String post);
 }

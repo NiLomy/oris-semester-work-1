@@ -2,6 +2,7 @@ package ru.kpfu.itis.lobanov.controller.servlets;
 
 import ru.kpfu.itis.lobanov.model.service.PostService;
 import ru.kpfu.itis.lobanov.model.service.impl.PostServiceImpl;
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
@@ -15,24 +16,23 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "profileServlet", urlPatterns = "/profile")
+@WebServlet(urlPatterns = ServerResources.PROFILE_URL)
 public class ProfileServlet extends HttpServlet {
     private PostService postService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        postService = (PostServiceImpl) getServletContext().getAttribute("postService");
+        postService = (PostServiceImpl) getServletContext().getAttribute(ServerResources.POST_SERVICE);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
-        UserDto userDto = (UserDto) session.getAttribute("currentUser");
+        UserDto userDto = (UserDto) session.getAttribute(ServerResources.CURRENT_USER);
 
         List<PostDto> posts = postService.getAllFromUser(userDto.getLogin());
-        posts.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
-        req.setAttribute("currentUserPosts", posts);
-        req.getRequestDispatcher("WEB-INF/view/profile.ftl").forward(req, resp);
+        req.setAttribute(ServerResources.CURRENT_USER_POSTS, posts);
+        req.getRequestDispatcher(ServerResources.PROFILE_PAGE).forward(req, resp);
     }
 }

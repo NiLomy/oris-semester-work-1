@@ -10,7 +10,8 @@
                     </h6>
                     <p>
                         Religious studying is a site where you can start your road in studying different
-                        religions or to help others with their study... <a class="text-reset" style="color: #0b5ed7" href="${pageContext}/about-us">Read more</a>
+                        religions or to help others with their study... <a class="text-reset" style="color: #0b5ed7"
+                                                                           href="${pageContext}/about-us">Read more</a>
                     </p>
                 </div>
 

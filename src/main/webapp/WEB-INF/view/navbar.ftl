@@ -24,13 +24,19 @@
             <div class="d-flex align-items-center">
                 <#if currentUser?has_content>
                     <div class="dropdown">
-                        <div id="dropdownProfileImage" style="cursor: pointer" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img id="navProfileImage" src="${currentUser.imageUrl}" class="rounded-circle shadow-1-strong" height="45" width="45" alt="Profile picture" loading="lazy"/>
+                        <div id="dropdownProfileImage" style="cursor: pointer" class="dropdown-toggle"
+                             data-bs-toggle="dropdown" aria-expanded="false">
+                            <img id="navProfileImage" src="${currentUser.imageUrl}"
+                                 class="rounded-circle shadow-1-strong" height="45" width="45" alt="Profile picture"
+                                 loading="lazy"/>
                             <span class="arrow"></span>
                         </div>
-                        <ul id="navbar-dropdown" class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownProfileImage">
-                            <li style="--delay: 1;"><a class="dropdown-item" href="${pageContext}/profile">My profile</a></li>
-                            <li style="--delay: 1;"><a class="dropdown-item" href="${pageContext}/favourite">Favourite</a></li>
+                        <ul id="navbar-dropdown" class="dropdown-menu dropdown-menu-end"
+                            aria-labelledby="dropdownProfileImage">
+                            <li style="--delay: 1;"><a class="dropdown-item" href="${pageContext}/profile">My
+                                    profile</a></li>
+                            <li style="--delay: 1;"><a class="dropdown-item"
+                                                       href="${pageContext}/favourite">Favourite</a></li>
                             <li style="--delay: 3"><a class="dropdown-item" href="${pageContext}/logout">Logout</a></li>
                         </ul>
                     </div>

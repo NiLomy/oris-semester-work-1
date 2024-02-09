@@ -35,7 +35,8 @@
                                          alt="Profile image" class="img-fluid"
                                          style="width: 200px; border-radius: 10px;">
                                     <div class="d-flex pt-1">
-                                        <a href="${pageContext}/edit-profile" type="button" class="btn btn-primary flex-grow-1">Edit profile</a>
+                                        <a href="${pageContext}/edit-profile" type="button"
+                                           class="btn btn-primary flex-grow-1">Edit profile</a>
                                     </div>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
@@ -66,12 +67,13 @@
                                 <div class="container my-1 py-1 a-post">
                                     <div class="row d-flex justify-content-center">
                                         <div class="col-md-12 col-lg-10 col-xl-8">
-                                            <div class="card" href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}">
+                                            <div class="card"
+                                                 href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}">
                                                 <div class="card-body p-4">
                                                     <div class="d-flex flex-start">
                                                         <img class="rounded-circle shadow-1-strong me-3"
                                                              src="${p.authorImageUrl}" alt="avatar" width="65"
-                                                             height="65" />
+                                                             height="65"/>
                                                         <div class="flex-grow-1 flex-shrink-1">
                                                             <div>
                                                                 <div class="d-flex justify-content-between align-items-center">
@@ -86,7 +88,8 @@
                                                                 </div>
                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                     <p class="mb-1">
-                                                                        ${p.author} <span class="small">- ${p.date}</span>
+                                                                        ${p.author} <span
+                                                                                class="small">- ${p.date}</span>
                                                                     </p>
                                                                 </div>
                                                                 <div class="small d-flex justify-content-start">
@@ -110,7 +113,8 @@
                             You don't have posts =(
                         </p>
                         <p>
-                            Fix it by  <a class="btn btn-outline-primary me-1 flex-grow-1" href="${pageContext}/create-post">creating post</a>
+                            Fix it by <a class="btn btn-outline-primary me-1 flex-grow-1"
+                                         href="${pageContext}/create-post">creating post</a>
                         </p>
                     </#if>
                 </div>

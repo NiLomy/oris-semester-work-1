@@ -2,6 +2,7 @@ package ru.kpfu.itis.lobanov.controller.servlets;
 
 import ru.kpfu.itis.lobanov.model.service.impl.PostServiceImpl;
 import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(urlPatterns = "/another-profile")
+@WebServlet(urlPatterns = ServerResources.ANOTHER_PROFILE_URL)
 public class AnotherUserProfileServlet extends HttpServlet {
     private UserServiceImpl userService;
     private PostServiceImpl postService;
@@ -23,29 +24,27 @@ public class AnotherUserProfileServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        userService = (UserServiceImpl) getServletContext().getAttribute("userService");
-        postService = (PostServiceImpl) getServletContext().getAttribute("postService");
+        userService = (UserServiceImpl) getServletContext().getAttribute(ServerResources.USER_SERVICE);
+        postService = (PostServiceImpl) getServletContext().getAttribute(ServerResources.POST_SERVICE);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String nickname = req.getParameter("anotherUser");
+        String nickname = req.getParameter(ServerResources.ANOTHER_USER);
         UserDto anotherUserDto = userService.get(nickname);
-        req.setAttribute("anotherUser", anotherUserDto);
+        req.setAttribute(ServerResources.ANOTHER_USER, anotherUserDto);
 
         HttpSession httpSession = req.getSession();
-        UserDto currentUserDto = (UserDto) httpSession.getAttribute("currentUser");
+        UserDto currentUserDto = (UserDto) httpSession.getAttribute(ServerResources.CURRENT_USER);
 
         List<PostDto> posts = postService.getAllFromUser(nickname);
-        posts.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
 
         if (currentUserDto != null && anotherUserDto.getLogin().equals(currentUserDto.getLogin())) {
-            req.setAttribute("currentUserPosts", posts);
-            req.getRequestDispatcher("WEB-INF/view/profile.ftl").forward(req, resp);
+            req.setAttribute(ServerResources.CURRENT_USER_POSTS, posts);
+            req.getRequestDispatcher(ServerResources.PROFILE_PAGE).forward(req, resp);
         } else {
-            req.setAttribute("anotherUserPosts", posts);
-            req.getRequestDispatcher("WEB-INF/view/another-user-profile.ftl").forward(req, resp);
+            req.setAttribute(ServerResources.ANOTHER_USER_POSTS, posts);
+            req.getRequestDispatcher(ServerResources.ANOTHER_USER_PROFILE_PAGE).forward(req, resp);
         }
     }
-
 }

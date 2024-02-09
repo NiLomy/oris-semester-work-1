@@ -3,8 +3,8 @@
 <#macro scripts>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script>
-        $(function(){
-            $("#remember-me").change(function(){
+        $(function () {
+            $("#remember-me").change(function () {
                 let rememberMe = $("#remember-me");
                 if (rememberMe.val() === "off") {
                     rememberMe.val("on");
@@ -55,13 +55,18 @@
                     <div class="col-md-10 col-lg-8 col-xl-4">
                         <div class="card">
                             <div class="card-body p-4" style="text-align: left">
-                                <label for="nickname">Nickname:</label><input type="text" name="nickname" class="form-control" id="nickname" placeholder="Login">
-                                <label for="password">Password:</label><input type="password" name="password" class="form-control" id="password" placeholder="Password">
+                                <label for="nickname">Nickname:</label><input type="text" name="nickname"
+                                                                              class="form-control" id="nickname"
+                                                                              placeholder="Login">
+                                <label for="password">Password:</label><input type="password" name="password"
+                                                                              class="form-control" id="password"
+                                                                              placeholder="Password">
                                 <p id="input-error" class="invalid-feedback d-block" role="alert"></p>
 
                                 <div style="text-align: center">
                                     <div class="mt-4">
-                                        <input id="remember-me" class="form-check-input" type="checkbox" value="off" name="remember_me">
+                                        <input id="remember-me" class="form-check-input" type="checkbox" value="off"
+                                               name="remember_me">
                                         <label class="form-check-label" for="remember_me">Remember me</label>
                                     </div>
                                     <br>

@@ -1,11 +1,13 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet(name = "logoutServlet", urlPatterns = "/logout")
+@WebServlet(urlPatterns = ServerResources.LOGOUT_URL)
 public class LogoutServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -17,7 +19,7 @@ public class LogoutServlet extends HttpServlet {
         clear(req, resp);
     }
 
-    private void clear(HttpServletRequest req, HttpServletResponse resp) {
+    private void clear(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
@@ -31,10 +33,6 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate();
         }
 
-        try {
-            resp.sendRedirect(getServletContext().getContextPath() + "/login");
-        } catch (IOException e) {
-            throw new RuntimeException("Can't redirect to this site");
-        }
+        resp.sendRedirect(getServletContext().getContextPath() + ServerResources.LOGIN_URL);
     }
 }

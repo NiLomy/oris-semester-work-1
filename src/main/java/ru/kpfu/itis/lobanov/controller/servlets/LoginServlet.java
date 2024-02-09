@@ -2,7 +2,7 @@ package ru.kpfu.itis.lobanov.controller.servlets;
 
 import ru.kpfu.itis.lobanov.model.service.UserService;
 import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
-import ru.kpfu.itis.lobanov.util.PasswordUtil;
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
 import javax.servlet.ServletConfig;
@@ -14,39 +14,38 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet(name = "loginServlet", urlPatterns = "/login")
+@WebServlet(urlPatterns = ServerResources.LOGIN_URL)
 public class LoginServlet extends HttpServlet {
     private UserService userService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        userService = (UserServiceImpl) getServletContext().getAttribute("userService");
+        userService = (UserServiceImpl) getServletContext().getAttribute(ServerResources.USER_SERVICE);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("WEB-INF/view/login.ftl").forward(req, resp);
+        req.getRequestDispatcher(ServerResources.LOGIN_PAGE).forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String login = req.getParameter("nickname");
-        String password = PasswordUtil.encrypt(req.getParameter("password"));
-        String isRemembered = req.getParameter("rememberMe");
+        String login = req.getParameter(ServerResources.NICKNAME);
+        String password = req.getParameter(ServerResources.PASSWORD);
+        String isRemembered = req.getParameter(ServerResources.REMEMBER_ME);
 
+        resp.setContentType(ServerResources.RESP_TYPE_PLAIN_TEXT);
         UserDto userDto = userService.get(login, password);
         if (userDto == null) {
-            resp.setContentType("text/plain");
-            resp.getWriter().write("invalidInput");
+            resp.getWriter().write(ServerResources.INVALID_INPUT);
         } else {
             HttpSession httpSession = req.getSession();
-            httpSession.setAttribute("currentUser", userDto);
-            if (isRemembered != null && isRemembered.equals("on")) {
+            httpSession.setAttribute(ServerResources.CURRENT_USER, userDto);
+            if (isRemembered != null && isRemembered.equals(ServerResources.IS_REMEMBER_ME_PRESSED)) {
                 userService.remember(userDto, req, resp);
             }
-            resp.setContentType("text/plain");
-            resp.getWriter().write("validInput");
+            resp.getWriter().write(ServerResources.VALID_INPUT);
         }
     }
 }

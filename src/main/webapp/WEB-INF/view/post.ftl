@@ -142,13 +142,15 @@
                     <div class="card message-card">
                         <div class="card-body">
                             <div class="d-flex flex-start align-items-center">
-                                <a style="text-decoration: none; color: inherit" href="${pageContext}/another-profile?anotherUser=${currentPost.author}">
+                                <a style="text-decoration: none; color: inherit"
+                                   href="${pageContext}/another-profile?anotherUser=${currentPost.author}">
                                     <img class="rounded-circle shadow-1-strong me-3"
                                          src="${currentPost.authorImageUrl}" alt="avatar" width="60"
-                                         height="60" />
+                                         height="60"/>
                                 </a>
                                 <div>
-                                    <a style="text-decoration: none; color: inherit" href="${pageContext}/another-profile?anotherUser=${currentPost.author}">
+                                    <a style="text-decoration: none; color: inherit"
+                                       href="${pageContext}/another-profile?anotherUser=${currentPost.author}">
                                         <h6 class="fw-bold text-primary mb-1 me-5">${currentPost.author}</h6>
                                     </a>
                                 </div>
@@ -164,19 +166,36 @@
                             </p>
                             <div class="d-flex justify-content-between" style="font-size: large">
                                 <#if currentUser? has_content>
-                                    <p id="likes"><span id="post-like-value">${currentPost.likes}</span> <a id="like-button" style="cursor: pointer; text-decoration: none; color: inherit"><i class="far fa-thumbs-up me-2"></i></a></p>
+                                    <p id="likes"><span id="post-like-value">${currentPost.likes}</span> <a
+                                                id="like-button"
+                                                style="cursor: pointer; text-decoration: none; color: inherit"><i
+                                                    class="far fa-thumbs-up me-2"></i></a></p>
                                 <#else>
-                                    <p id="unauth-likes">${currentPost.likes} <a id="unauth-like-button" style="cursor: pointer; text-decoration: none; color: inherit"><i class="far fa-thumbs-up me-2"></i></a></p>
+                                    <p id="unauth-likes">${currentPost.likes} <a id="unauth-like-button"
+                                                                                 style="cursor: pointer; text-decoration: none; color: inherit"><i
+                                                    class="far fa-thumbs-up me-2"></i></a></p>
                                 </#if>
                                 <div>
                                     <#if currentUser? has_content>
                                         <#if isFavourite? has_content>
-                                            <button type="button" id="unfavourite" class="btn btn-primary me-1 flex-grow-1"><i class="fa fa-bookmark-o" aria-hidden="true"></i> Remove from favourites</button>
+                                            <button type="button" id="unfavourite"
+                                                    class="btn btn-primary me-1 flex-grow-1"><i class="fa fa-bookmark-o"
+                                                                                                aria-hidden="true"></i>
+                                                Remove from favourites
+                                            </button>
                                         <#else>
-                                            <button type="button" id="favourite" class="btn btn-primary me-1 flex-grow-1"><i class="fa fa-bookmark" aria-hidden="true"></i> Mark favourite</button>
+                                            <button type="button" id="favourite"
+                                                    class="btn btn-primary me-1 flex-grow-1"><i class="fa fa-bookmark"
+                                                                                                aria-hidden="true"></i>
+                                                Mark favourite
+                                            </button>
                                         </#if>
                                     <#else>
-                                        <button type="button" id="unauth-favourite" class="btn btn-primary me-1 flex-grow-1"><i class="fa fa-bookmark-o" aria-hidden="true"></i> Mark favourite</button>
+                                        <button type="button" id="unauth-favourite"
+                                                class="btn btn-primary me-1 flex-grow-1"><i class="fa fa-bookmark-o"
+                                                                                            aria-hidden="true"></i> Mark
+                                            favourite
+                                        </button>
                                     </#if>
                                 </div>
                             </div>
@@ -195,17 +214,19 @@
                         <div class="container my-1 py-1">
                             <div class="row d-flex justify-content-center">
                                 <div class="col-md-12 col-lg-10 col-xl-8">
-                                    <div class="card message-card"  style="border: 1px solid">
+                                    <div class="card message-card" style="border: 1px solid">
                                         <div class="card-body p-4">
                                             <div class="d-flex flex-start">
-                                                <a style="text-decoration: none; color: inherit" href="${pageContext}/another-profile?anotherUser=${message.author}">
+                                                <a style="text-decoration: none; color: inherit"
+                                                   href="${pageContext}/another-profile?anotherUser=${message.author}">
                                                     <img class="rounded-circle shadow-1-strong me-3"
                                                          src="${message.authorImgUrl}" alt="avatar" width="65"
-                                                         height="65" />
+                                                         height="65"/>
                                                 </a>
                                                 <div class="flex-grow-1 flex-shrink-1">
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <a style="text-decoration: none; color: inherit" href="${pageContext}/another-profile?anotherUser=${message.author}">
+                                                        <a style="text-decoration: none; color: inherit"
+                                                           href="${pageContext}/another-profile?anotherUser=${message.author}">
                                                             <p class="mb-1">
                                                                 ${message.author}
                                                             </p>
@@ -213,15 +234,30 @@
                                                         <div><span class="small">${message.date}</span></div>
                                                     </div>
                                                     <div class="d-flex justify-content-between text-wrap">
-                                                        <p id="user-message" class="small mb-0 message text-break text-justify m-1"
+                                                        <p id="user-message"
+                                                           class="small mb-0 message text-break text-justify m-1"
                                                            style="color: #000;">${message.content}</p>
                                                     </div>
                                                     <div class="small d-flex justify-content-start">
                                                         <div class="d-flex align-items-center me-3">
                                                             <#if currentUser? has_content>
-                                                                <p id="message-like-${message.id}" class="mb-0"><span id="message-like-value-${message.id}">${message.likes}</span> <a id="message-like-button-${message.id}" class="message-like-button" style="cursor: pointer; text-decoration: none; color: inherit"  data-message-id="${message.id}"><i class="far fa-thumbs-up me-2"></i></a></p>
+                                                                <p id="message-like-${message.id}" class="mb-0"><span
+                                                                            id="message-like-value-${message.id}">${message.likes}</span>
+                                                                    <a id="message-like-button-${message.id}"
+                                                                       class="message-like-button"
+                                                                       style="cursor: pointer; text-decoration: none; color: inherit"
+                                                                       data-message-id="${message.id}"><i
+                                                                                class="far fa-thumbs-up me-2"></i></a>
+                                                                </p>
                                                             <#else>
-                                                                <p id="unauth-message-like-${message.id}" class="mb-0">${message.likes} <a id="unauth-message-like-button" class="unauth-message-like-button" style="cursor: pointer; text-decoration: none; color: inherit"  data-message-id="${message.id}"><i class="far fa-thumbs-up me-2"></i></a></p>
+                                                                <p id="unauth-message-like-${message.id}"
+                                                                   class="mb-0">${message.likes} <a
+                                                                            id="unauth-message-like-button"
+                                                                            class="unauth-message-like-button"
+                                                                            style="cursor: pointer; text-decoration: none; color: inherit"
+                                                                            data-message-id="${message.id}"><i
+                                                                                class="far fa-thumbs-up me-2"></i></a>
+                                                                </p>
                                                             </#if>
                                                         </div>
                                                     </div>
@@ -251,19 +287,25 @@
                                             <div class="d-flex flex-start w-100">
                                                 <img class="rounded-circle shadow-1-strong me-3"
                                                      src="${currentUser.imageUrl}" alt="avatar" width="40"
-                                                     height="40" />
+                                                     height="40"/>
                                                 <div class="w-100 form-floating">
-                                                    <textarea id="new-message" placeholder="Type comment" class="form-control" rows="4" style="background: #fff;"></textarea>
+                                                    <textarea id="new-message" placeholder="Type comment"
+                                                              class="form-control" rows="4"
+                                                              style="background: #fff;"></textarea>
                                                     <label class="form-floating" for="new-message">Message</label>
-                                                    <p id="new-message-error" class="invalid-feedback d-block" role="alert"></p>
+                                                    <p id="new-message-error" class="invalid-feedback d-block"
+                                                       role="alert"></p>
                                                 </div>
                                             </div>
                                             <div class="float-end mt-2 pt-1">
-                                                <button id="send-message-button" type="button" class="btn btn-primary btn-sm">Send comment</button>
+                                                <button id="send-message-button" type="button"
+                                                        class="btn btn-primary btn-sm">Send comment
+                                                </button>
                                             </div>
                                         <#else>
                                             <div class="w-100 form-floating" style="text-align: center">
-                                                <p id="anon-user-message" class="form-control">To write comments you should be logged in</p>
+                                                <p id="anon-user-message" class="form-control">To write comments you
+                                                    should be logged in</p>
                                                 <br>
                                             </div>
                                         </#if>

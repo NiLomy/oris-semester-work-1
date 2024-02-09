@@ -140,10 +140,15 @@
                 <div class="row d-flex justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="card">
-                            <div class="card-body p-4" style="text-align: left" >
-                                <label class="form-floating" for="post-name">Post name: </label><input id="post-name" class="form-control" type="text" name="postName" maxlength="100">
+                            <div class="card-body p-4" style="text-align: left">
+                                <label class="form-floating" for="post-name">Post name: </label><input id="post-name"
+                                                                                                       class="form-control"
+                                                                                                       type="text"
+                                                                                                       name="postName"
+                                                                                                       maxlength="100">
                                 <p id="post-name-error" class="invalid-feedback d-block" role="alert"></p>
-                                <label class="form-floating" for="post-category">Choose your category: </label><select id="post-category" class="form-select" name="postCategory">
+                                <label class="form-floating" for="post-category">Choose your category: </label><select
+                                        id="post-category" class="form-select" name="postCategory">
                                     <option selected disabled value="">Choose one of this categories</option>
                                     <option>Christianity</option>
                                     <option>Islam</option>
@@ -151,10 +156,12 @@
                                     <option>Other</option>
                                 </select>
                                 <p id="post-category-error" class="invalid-feedback d-block" role="alert"></p>
-                                <label class="form-floating" for="post-text">Your post text: </label><textarea id="post-text" class="form-control" name="postText" type="text"></textarea>
+                                <label class="form-floating" for="post-text">Your post text: </label><textarea
+                                        id="post-text" class="form-control" name="postText" type="text"></textarea>
                                 <p id="post-text-error" class="invalid-feedback d-block" role="alert"></p>
 
-                                <input id="submit-button" class="btn btn-primary form-control" type="submit" value="Create post"/>
+                                <input id="submit-button" class="btn btn-primary form-control" type="submit"
+                                       value="Create post"/>
                             </div>
                         </div>
                     </div>

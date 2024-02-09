@@ -366,11 +366,14 @@
                                          alt="Profile image" class="img-fluid"
                                          style="width: 200px; border-radius: 10px;">
                                     <div class="ps-3 mt-1 d-flex pt-1">
-                                        <form id="image-form" action="upload" method="post" enctype="multipart/form-data">
+                                        <form id="image-form" action="upload" method="post"
+                                              enctype="multipart/form-data">
                                             <input id="file" class="form-control" type="file" name="file">
                                             <br>
                                             <div class="col-md-5">
-                                                <input id="image-change" class="btn btn-primary flex-grow-1 form-control" type="button" value="upload">
+                                                <input id="image-change"
+                                                       class="btn btn-primary flex-grow-1 form-control" type="button"
+                                                       value="upload">
                                             </div>
                                         </form>
                                     </div>
@@ -381,34 +384,73 @@
                                             <div class="row d-flex justify-content-start">
                                                 <div class="col-md-8 col-lg-6 col-xl-6">
                                                     <form action="edit-profile" method="post" id="edit-profile-form">
-                                                        <div class="ps-2" style="text-align: left" >
-                                                            <label for="name">Name: </label><input id="name" class="form-control" type="text" name="name" maxlength="60" value="${currentUser.firstName}">
-                                                            <p id="name-error" class="invalid-feedback d-block" role="alert"></p>
-                                                            <label for="lastname">Lastname: </label><input id="lastname" class="form-control" type="text" name="lastname" maxlength="60" value="${currentUser.lastName}">
-                                                            <p id="lastname-error" class="invalid-feedback d-block" role="alert"></p>
-                                                            <label for="nickname">Nickname:</label><input id="nickname" class="form-control" type="text" name="nickname" maxlength="60" value="${currentUser.login}">
-                                                            <p id="nickname-error" class="invalid-feedback d-block" role="alert"></p>
-                                                            <label for="email">Email: </label><input id="email" class="form-control" type="email" name="email" maxlength="60" value="${currentUser.email}">
-                                                            <p id="email-error" class="invalid-feedback d-block" role="alert"></p>
+                                                        <div class="ps-2" style="text-align: left">
+                                                            <label for="name">Name: </label><input id="name"
+                                                                                                   class="form-control"
+                                                                                                   type="text"
+                                                                                                   name="name"
+                                                                                                   maxlength="60"
+                                                                                                   value="${currentUser.firstName}">
+                                                            <p id="name-error" class="invalid-feedback d-block"
+                                                               role="alert"></p>
+                                                            <label for="lastname">Lastname: </label><input id="lastname"
+                                                                                                           class="form-control"
+                                                                                                           type="text"
+                                                                                                           name="lastname"
+                                                                                                           maxlength="60"
+                                                                                                           value="${currentUser.lastName}">
+                                                            <p id="lastname-error" class="invalid-feedback d-block"
+                                                               role="alert"></p>
+                                                            <label for="nickname">Nickname:</label><input id="nickname"
+                                                                                                          class="form-control"
+                                                                                                          type="text"
+                                                                                                          name="nickname"
+                                                                                                          maxlength="60"
+                                                                                                          value="${currentUser.login}">
+                                                            <p id="nickname-error" class="invalid-feedback d-block"
+                                                               role="alert"></p>
+                                                            <label for="email">Email: </label><input id="email"
+                                                                                                     class="form-control"
+                                                                                                     type="email"
+                                                                                                     name="email"
+                                                                                                     maxlength="60"
+                                                                                                     value="${currentUser.email}">
+                                                            <p id="email-error" class="invalid-feedback d-block"
+                                                               role="alert"></p>
                                                             <#if currentUser.aboutMe? has_content>
-                                                                <label for="about-me">About me: </label><input id="about-me" class="form-control" type="text" name="about-me" value="${currentUser.aboutMe}">
+                                                                <label for="about-me">About me: </label><input
+                                                                    id="about-me" class="form-control" type="text"
+                                                                    name="about-me" value="${currentUser.aboutMe}">
                                                             <#else>
-                                                                <label for="empty-about-me">About me: </label><input id="empty-about-me" class="form-control" type="text" name="about-me">
+                                                                <label for="empty-about-me">About me: </label><input
+                                                                    id="empty-about-me" class="form-control" type="text"
+                                                                    name="about-me">
                                                             </#if>
                                                             <br>
-                                                            <input type="button" class="btn btn-primary flex-grow-1" value="Save changes" id="submit-button">
+                                                            <input type="button" class="btn btn-primary flex-grow-1"
+                                                                   value="Save changes" id="submit-button">
                                                         </div>
                                                     </form>
                                                     <br>
                                                     <br>
                                                     <form id="change-password-form">
-                                                        <label for="current-password">Current password:</label><input id="current-password" class="form-control" type="password" name="current-password" maxlength="60">
-                                                        <p id="current-password-error" class="invalid-feedback d-block" role="alert"></p>
-                                                        <label for="new-password">New password:</label><input id="new-password" class="form-control" type="password" name="new-password" maxlength="60">
-                                                        <p id="new-password-error" class="invalid-feedback d-block" role="alert"></p>
-                                                        <label for="new-password-repeat">Repeat password:</label><input id="new-password-repeat" class="form-control" type="password" name="repeat-password" maxlength="60">
-                                                        <p id="repeat-password-error" class="invalid-feedback d-block" role="alert"></p>
-                                                        <input type="button" class="btn btn-primary flex-grow-1" value="Change password" id="change-password-button">
+                                                        <label for="current-password">Current password:</label><input
+                                                                id="current-password" class="form-control"
+                                                                type="password" name="current-password" maxlength="60">
+                                                        <p id="current-password-error" class="invalid-feedback d-block"
+                                                           role="alert"></p>
+                                                        <label for="new-password">New password:</label><input
+                                                                id="new-password" class="form-control" type="password"
+                                                                name="new-password" maxlength="60">
+                                                        <p id="new-password-error" class="invalid-feedback d-block"
+                                                           role="alert"></p>
+                                                        <label for="new-password-repeat">Repeat password:</label><input
+                                                                id="new-password-repeat" class="form-control"
+                                                                type="password" name="repeat-password" maxlength="60">
+                                                        <p id="repeat-password-error" class="invalid-feedback d-block"
+                                                           role="alert"></p>
+                                                        <input type="button" class="btn btn-primary flex-grow-1"
+                                                               value="Change password" id="change-password-button">
                                                     </form>
                                                 </div>
                                             </div>

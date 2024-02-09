@@ -6,17 +6,19 @@ import ru.kpfu.itis.lobanov.model.service.UserService;
 import ru.kpfu.itis.lobanov.model.service.impl.MessageServiceImpl;
 import ru.kpfu.itis.lobanov.model.service.impl.PostServiceImpl;
 import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Comparator;
 
-@WebServlet(name = "homeServlet", urlPatterns = "")
+@WebServlet(urlPatterns = ServerResources.HOME_URL)
 public class HomeServlet extends HttpServlet {
     private UserService userService;
     private MessageService messageService;
@@ -25,32 +27,20 @@ public class HomeServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        userService = (UserServiceImpl) getServletContext().getAttribute("userService");
-        messageService = (MessageServiceImpl) getServletContext().getAttribute("messageService");
-        postService = (PostServiceImpl) getServletContext().getAttribute("postService");
+        userService = (UserServiceImpl) getServletContext().getAttribute(ServerResources.USER_SERVICE);
+        messageService = (MessageServiceImpl) getServletContext().getAttribute(ServerResources.MESSAGE_SERVICE);
+        postService = (PostServiceImpl) getServletContext().getAttribute(ServerResources.POST_SERVICE);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for (Cookie c : cookies) {
-                if (c.getName().equals("user")) {
-                    HttpSession httpSession = req.getSession();
-                    UserDto user = userService.get(c.getValue());
-                    httpSession.setAttribute("currentUser", user);
-                    break;
-                }
-            }
-        }
+        userService.authUser(req, resp);
 
         UserDto userDto = messageService.getMostFrequentUser();
-        PostDto postDto = null;
-        if (!postService.getAll().isEmpty()) {
-            postDto = postService.getAll().stream().max(Comparator.comparingInt(PostDto::getLikes)).get();
-        }
-        req.setAttribute("mostPopularPost", postDto);
-        req.setAttribute("mostActiveUser", userDto);
-        req.getRequestDispatcher("WEB-INF/view/home.ftl").forward(req, resp);
+        PostDto postDto = postService.getMostPopularPost();
+
+        req.setAttribute(ServerResources.MOST_POPULAR_POST, postDto);
+        req.setAttribute(ServerResources.MOST_ACTIVE_USER, userDto);
+        req.getRequestDispatcher(ServerResources.HOME_PAGE).forward(req, resp);
     }
 }

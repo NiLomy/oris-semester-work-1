@@ -3,8 +3,8 @@
 <#macro scripts>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script>
-        $(function(){
-            $("#post-category").change(function() {
+        $(function () {
+            $("#post-category").change(function () {
                 performCategorySearch()
             });
         });
@@ -37,12 +37,12 @@
             }
         }
 
-        $(document).ready(function() {
-            $('#search-button').click(function() {
+        $(document).ready(function () {
+            $('#search-button').click(function () {
                 performTextSearch();
             });
 
-            $('#search-box-input').keypress(function(event) {
+            $('#search-box-input').keypress(function (event) {
                 if (event.which === 13) {
                     event.preventDefault();
                     performTextSearch();
@@ -96,7 +96,9 @@
 <#macro content2>
     <div class="d-flex justify-content-between">
         <div class="col-2 ms-5">
-            <label for="post-category" class="mb-1">Choose your category:</label><select id="post-category" name="postCategory" class="form-select">
+            <label for="post-category" class="mb-1">Choose your category:</label><select id="post-category"
+                                                                                         name="postCategory"
+                                                                                         class="form-select">
                 <option selected>All categories</option>
                 <option>Christianity</option>
                 <option>Islam</option>
@@ -106,7 +108,8 @@
         </div>
         <div class="col-5 mt-3">
             <div class="input-group">
-                <input id="search-box-input" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                <input id="search-box-input" type="search" class="form-control rounded" placeholder="Search"
+                       aria-label="Search" aria-describedby="search-addon"/>
                 <button id="search-button" type="button" class="btn btn-outline-primary">
                     <i class="fas fa-search"></i>
                 </button>
@@ -122,7 +125,7 @@
         <#if favouritePosts? has_content>
             <section class="gradient-custom all-posts">
                 <div id="nothing-found" style="display: none">
-                    <p >No results found</p>
+                    <p>No results found</p>
                     <a class="btn btn-primary me-1 flex-grow-1" href="${pageContext}/posts">
                         <i class="fa fa-list-ul" aria-hidden="true"></i> Search for interesting posts
                     </a>
@@ -134,15 +137,17 @@
                                 <div class="card">
                                     <div class="card-body p-4">
                                         <div class="d-flex flex-start">
-                                            <a style="text-decoration: none; color: inherit" href="${pageContext}/another-profile?anotherUser=${currentPost.author}">
+                                            <a style="text-decoration: none; color: inherit"
+                                               href="${pageContext}/another-profile?anotherUser=${currentPost.author}">
                                                 <img class="rounded-circle shadow-1-strong me-3"
                                                      src="${p.authorImageUrl}" alt="avatar" width="65"
-                                                     height="65" />
+                                                     height="65"/>
                                             </a>
                                             <div class="flex-grow-1 flex-shrink-1">
                                                 <div>
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <a href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}" style="text-decoration: none; color: inherit">
+                                                        <a href="${pageContext}/post?postName=${p.name}&postAuthor=${p.author}"
+                                                           style="text-decoration: none; color: inherit">
                                                             <p class="post-name">
                                                                 <b>${p.name}</b>
                                                             </p>
@@ -158,7 +163,8 @@
                                                     </div>
                                                     <div class="small d-flex justify-content-start">
                                                         <div class="d-flex align-items-center me-3">
-                                                            <p class="mb-0">${p.likes} <i class="far fa-thumbs-up me-2"></i></p>
+                                                            <p class="mb-0">${p.likes} <i
+                                                                        class="far fa-thumbs-up me-2"></i></p>
                                                         </div>
                                                     </div>
                                                 </div>

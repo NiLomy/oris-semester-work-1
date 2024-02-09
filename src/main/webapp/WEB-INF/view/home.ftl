@@ -20,7 +20,8 @@
                 <div class="col-md-8 offset-md-2 text">
                     <p style="text-indent: 30px">
                         Welcome, we are glad to welcome you to our website! Here you can study different religions,
-                        communicate with like-minded people and explore the world together with our magnificent community.
+                        communicate with like-minded people and explore the world together with our magnificent
+                        community.
                         Please be polite and follow the rules of communication.
                     </p>
                     <p style="text-indent: 30px">
@@ -45,11 +46,12 @@
                                             <div class="d-flex flex-start">
                                                 <img class="rounded-circle shadow-1-strong me-3"
                                                      src="${mostPopularPost.authorImageUrl}" alt="avatar" width="65"
-                                                     height="65" />
+                                                     height="65"/>
                                                 <div class="flex-grow-1 flex-shrink-1">
                                                     <div>
                                                         <div class="d-flex justify-content-between align-items-center">
-                                                            <a href="${pageContext}/post?postName=${mostPopularPost.name}&postAuthor=${mostPopularPost.author}" style="text-decoration: none; color: inherit">
+                                                            <a href="${pageContext}/post?postName=${mostPopularPost.name}&postAuthor=${mostPopularPost.author}"
+                                                               style="text-decoration: none; color: inherit">
                                                                 <p class="post-name">
                                                                     <b>${mostPopularPost.name}</b>
                                                                 </p>
@@ -60,12 +62,14 @@
                                                         </div>
                                                         <div class="d-flex justify-content-between align-items-center">
                                                             <p class="mb-1">
-                                                                ${mostPopularPost.author} <span class="small">- ${mostPopularPost.date}</span>
+                                                                ${mostPopularPost.author} <span
+                                                                        class="small">- ${mostPopularPost.date}</span>
                                                             </p>
                                                         </div>
                                                         <div class="small d-flex justify-content-start">
                                                             <div class="d-flex align-items-center me-3">
-                                                                <p class="mb-0">${mostPopularPost.likes} <i class="far fa-thumbs-up me-2"></i></p>
+                                                                <p class="mb-0">${mostPopularPost.likes} <i
+                                                                            class="far fa-thumbs-up me-2"></i></p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -91,14 +95,18 @@
                                             <div class="p-4">
                                                 <div class="d-flex text-black">
                                                     <div class="flex-shrink-0">
-                                                        <a style="text-decoration: none; color: inherit" href="${pageContext}/another-profile?anotherUser=${mostActiveUser.login}">
+                                                        <a style="text-decoration: none; color: inherit"
+                                                           href="${pageContext}/another-profile?anotherUser=${mostActiveUser.login}">
                                                             <img src="${mostActiveUser.imageUrl}"
                                                                  alt="Profile image" class="img-fluid"
                                                                  style="width: 120px; border-radius: 10px;">
                                                         </a>
                                                     </div>
                                                     <div class="flex-grow-1 ms-3 mt-4">
-                                                        <h5 class="mb-1"><a href="${pageContext}/another-profile?anotherUser=${mostActiveUser.login}" style="text-decoration: none; color: inherit">${mostActiveUser.login}</a></h5>
+                                                        <h5 class="mb-1"><a
+                                                                    href="${pageContext}/another-profile?anotherUser=${mostActiveUser.login}"
+                                                                    style="text-decoration: none; color: inherit">${mostActiveUser.login}</a>
+                                                        </h5>
                                                     </div>
                                                 </div>
                                             </div>

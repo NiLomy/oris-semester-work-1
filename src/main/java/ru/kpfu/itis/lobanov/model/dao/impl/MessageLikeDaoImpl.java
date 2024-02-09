@@ -3,6 +3,7 @@ package ru.kpfu.itis.lobanov.model.dao.impl;
 import ru.kpfu.itis.lobanov.model.dao.MessageLikeDao;
 import ru.kpfu.itis.lobanov.model.entity.MessageLike;
 import ru.kpfu.itis.lobanov.util.DatabaseConnectionProvider;
+import ru.kpfu.itis.lobanov.util.constants.LogMessages;
 import ru.kpfu.itis.lobanov.util.exception.DbException;
 
 import java.sql.*;
@@ -11,30 +12,40 @@ import java.util.List;
 
 public class MessageLikeDaoImpl implements MessageLikeDao {
     private final Connection connection = DatabaseConnectionProvider.getConnection();
+    public static final String ID_COLUMN = "id";
+    public static final String AUTHOR_COLUMN = "author";
+    public static final String MESSAGE_ID_COLUMN = "message_id";
+    public static final String SELECT_SINGLE_MESSAGE_LIKE_BY_ID_QUERY = "SELECT * from likes_for_messages where id = ?";
+    public static final String SELECT_SINGLE_MESSAGE_LIKE_BY_AUTHOR_AND_MESSAGE_QUERY = "SELECT * from likes_for_messages where author = ? and message_id = ?";
+    public static final String SELECT_ALL_MESSAGE_LIKES_BY_MESSAGE_QUERY = "SELECT * from likes_for_messages where message_id = ?";
+    public static final String SELECT_ALL_MESSAGE_LIKES_QUERY = "SELECT * from likes_for_messages";
+    public static final String SAVE_MESSAGE_LIKE_QUERY = "insert into likes_for_messages (author, message_id) values (?, ?);";
+    public static final String UPDATE_MESSAGE_LIKE_QUERY = "update likes_for_messages set author=?, message_id=? where id=?;";
+    public static final String REMOVE_MESSAGE_LIKE_QUERY = "delete from likes_for_messages where author = ? and message_id = ?;";
+
     @Override
     public MessageLike get(int id) {
         try {
-            String sql = "SELECT * from likes_for_messages where id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_SINGLE_MESSAGE_LIKE_BY_ID_QUERY);
             preparedStatement.setInt(1, id);
 
             return getPostByStatement(preparedStatement);
         } catch (SQLException e) {
-            throw new DbException("Can't get post like from DB.", e);
+            throw new DbException(LogMessages.GET_SINGLE_MESSAGE_LIKE_DB_EXCEPTION, e);
         }
     }
 
     @Override
     public MessageLike get(String author, int messageId) {
         try {
-            String sql = "SELECT * from likes_for_messages where author = ? and message_id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, author);
-            preparedStatement.setInt(2, messageId);
+            int index = 1;
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_SINGLE_MESSAGE_LIKE_BY_AUTHOR_AND_MESSAGE_QUERY);
+            preparedStatement.setString(index++, author);
+            preparedStatement.setInt(index++, messageId);
 
             return getPostByStatement(preparedStatement);
         } catch (SQLException e) {
-            throw new DbException("Can't get post like from DB.", e);
+            throw new DbException(LogMessages.GET_SINGLE_MESSAGE_LIKE_DB_EXCEPTION, e);
         }
     }
 
@@ -44,9 +55,9 @@ public class MessageLikeDaoImpl implements MessageLikeDao {
         if (resultSet != null) {
             if (resultSet.next()) {
                 return new MessageLike(
-                        resultSet.getInt("id"),
-                        resultSet.getString("author"),
-                        resultSet.getInt("message_id")
+                        resultSet.getInt(ID_COLUMN),
+                        resultSet.getString(AUTHOR_COLUMN),
+                        resultSet.getInt(MESSAGE_ID_COLUMN)
                 );
             }
         }
@@ -56,8 +67,7 @@ public class MessageLikeDaoImpl implements MessageLikeDao {
     @Override
     public List<MessageLike> getAllFromMessage(int messageId) {
         try {
-            String sql = "SELECT * from likes_for_messages where message_id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_MESSAGE_LIKES_BY_MESSAGE_QUERY);
             preparedStatement.setInt(1, messageId);
             ResultSet resultSet = preparedStatement.executeQuery();
             List<MessageLike> messageLikes = new ArrayList<>();
@@ -66,16 +76,16 @@ public class MessageLikeDaoImpl implements MessageLikeDao {
                 while (resultSet.next()) {
                     messageLikes.add(
                             new MessageLike(
-                                    resultSet.getInt("id"),
-                                    resultSet.getString("author"),
-                                    resultSet.getInt("message_id")
+                                    resultSet.getInt(ID_COLUMN),
+                                    resultSet.getString(AUTHOR_COLUMN),
+                                    resultSet.getInt(MESSAGE_ID_COLUMN)
                             )
                     );
                 }
             }
             return messageLikes;
         } catch (SQLException e) {
-            throw new DbException("Can't get post likes list from DB.", e);
+            throw new DbException(LogMessages.GET_ALL_MESSAGE_LIKES_DB_EXCEPTION, e);
         }
     }
 
@@ -83,67 +93,66 @@ public class MessageLikeDaoImpl implements MessageLikeDao {
     public List<MessageLike> getAll() {
         try {
             Statement statement = connection.createStatement();
-            String sql = "SELECT * from likes_for_messages";
-            ResultSet resultSet = statement.executeQuery(sql);
+            ResultSet resultSet = statement.executeQuery(SELECT_ALL_MESSAGE_LIKES_QUERY);
             List<MessageLike> messageLikes = new ArrayList<>();
 
             if (resultSet != null) {
                 while (resultSet.next()) {
                     messageLikes.add(
                             new MessageLike(
-                                    resultSet.getInt("id"),
-                                    resultSet.getString("author"),
-                                    resultSet.getInt("message_id")
+                                    resultSet.getInt(ID_COLUMN),
+                                    resultSet.getString(AUTHOR_COLUMN),
+                                    resultSet.getInt(MESSAGE_ID_COLUMN)
                             )
                     );
                 }
             }
             return messageLikes;
         } catch (SQLException e) {
-            throw new DbException("Can't get post likes list from DB.", e);
+            throw new DbException(LogMessages.GET_ALL_MESSAGE_LIKES_DB_EXCEPTION, e);
         }
     }
 
     @Override
     public void save(MessageLike messageLike) {
-        String sql = "insert into likes_for_messages (author, message_id) values (?, ?);";
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, messageLike.getAuthor());
-            preparedStatement.setInt(2, messageLike.getMessageId());
+            int index = 1;
+            PreparedStatement preparedStatement = connection.prepareStatement(SAVE_MESSAGE_LIKE_QUERY);
+            preparedStatement.setString(index++, messageLike.getAuthor());
+            preparedStatement.setInt(index++, messageLike.getMessageId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DbException("Can't save post like into DB.", e);
+            throw new DbException(LogMessages.SAVE_MESSAGE_LIKE_DB_EXCEPTION, e);
         }
     }
 
     @Override
     public void update(MessageLike messageLike, int id) {
-        String sql = "update likes_for_messages set author=?, message_id=? where id=?;";
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, messageLike.getAuthor());
-            preparedStatement.setInt(2, messageLike.getMessageId());
-            preparedStatement.setInt(3, id);
+            int index = 1;
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_MESSAGE_LIKE_QUERY);
+            preparedStatement.setString(index++, messageLike.getAuthor());
+            preparedStatement.setInt(index++, messageLike.getMessageId());
+            preparedStatement.setInt(index++, id);
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DbException("Can't update message into DB.", e);
+            throw new DbException(LogMessages.UPDATE_MESSAGE_LIKE_DB_EXCEPTION, e);
         }
     }
 
     @Override
     public void remove(MessageLike messageLike) {
-        String sql = "delete from likes_for_messages where author = ? and message_id = ?;";
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, messageLike.getAuthor());
-            preparedStatement.setInt(2, messageLike.getMessageId());
+            int index = 1;
+            PreparedStatement preparedStatement = connection.prepareStatement(REMOVE_MESSAGE_LIKE_QUERY);
+            preparedStatement.setString(index++, messageLike.getAuthor());
+            preparedStatement.setInt(index++, messageLike.getMessageId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DbException("Can't save post like into DB.", e);
+            throw new DbException(LogMessages.REMOVE_MESSAGE_LIKE_DB_EXCEPTION, e);
         }
     }
 }

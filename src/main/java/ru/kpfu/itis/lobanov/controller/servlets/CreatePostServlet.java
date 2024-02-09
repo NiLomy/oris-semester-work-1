@@ -1,11 +1,8 @@
 package ru.kpfu.itis.lobanov.controller.servlets;
 
-import ru.kpfu.itis.lobanov.model.dao.UserDao;
-import ru.kpfu.itis.lobanov.model.dao.impl.UserDaoImpl;
-import ru.kpfu.itis.lobanov.model.entity.Post;
-import ru.kpfu.itis.lobanov.model.entity.User;
 import ru.kpfu.itis.lobanov.model.service.PostService;
 import ru.kpfu.itis.lobanov.model.service.impl.PostServiceImpl;
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
 import javax.servlet.ServletConfig;
@@ -16,83 +13,40 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.ZonedDateTime;
 
-@WebServlet(urlPatterns = "/create-post")
+@WebServlet(urlPatterns = ServerResources.CREATE_POST_URL)
 public class CreatePostServlet extends HttpServlet {
     private PostService postService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        postService = (PostServiceImpl) getServletContext().getAttribute("postService");
+        postService = (PostServiceImpl) getServletContext().getAttribute(ServerResources.POST_SERVICE);
     }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("WEB-INF/view/create-post.ftl").forward(req, resp);
+        req.getRequestDispatcher(ServerResources.CREATE_POST_PAGE).forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String postName = req.getParameter("postName");
-        String postCategory = req.getParameter("postCategory");
-        String postText = req.getParameter("postText");
+        String postName = req.getParameter(ServerResources.POST_NAME);
+        String postCategory = req.getParameter(ServerResources.POST_CATEGORY);
+        String postText = req.getParameter(ServerResources.POST_TEXT);
 
-        Timestamp date = getDate();
+        if (!postService.isPostValid(postName, postCategory, postText, req, resp)) return;
 
-        resp.setContentType("text/plain");
-        if (postName.isEmpty()) {
-            resp.getWriter().write("emptyPostName");
-            return;
-        }
-        if (postName.length() < 5) {
-            resp.getWriter().write("shortPostName");
-            return;
-        }
-        if (postName.length() > 100) {
-            resp.getWriter().write("longPostName");
-            return;
-        }
-        if (postCategory.isEmpty()) {
-            resp.getWriter().write("emptyPostCategory");
-            return;
-        }
-        if (postText.isEmpty()) {
-            resp.getWriter().write("emptyPostText");
-            return;
-        }
         HttpSession httpSession = req.getSession();
-        UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
+        UserDto userDto = (UserDto) httpSession.getAttribute(ServerResources.CURRENT_USER);
 
         if (!postService.isPostUnique(userDto.getLogin(), postName)) {
-            resp.getWriter().write("postAlreadyExist");
+            resp.getWriter().write(ServerResources.POST_ALREADY_EXISTS);
             return;
         }
 
-        UserDao userDao = new UserDaoImpl();
-        User user = userDao.get(userDto.getLogin());
+        postService.save(postName, postCategory, postText, userDto.getLogin());
 
-        postService.save(
-                new Post(
-                        postName,
-                        postCategory,
-                        postText,
-                        user.getId(),
-                        date,
-                        0
-                )
-        );
-
-        resp.sendRedirect(getServletContext().getContextPath() + "/post?postName=" + postName + "&postAuthor=" + user.getLogin());
-    }
-
-    private Timestamp getDate() {
-        String[] dateInput = ZonedDateTime.now().toString().split("T");
-        String[] timeInput = dateInput[1].split("\\.");
-        String stringDate = dateInput[0];
-        String stringTime = timeInput[0];
-
-        return Timestamp.valueOf(stringDate + " " + stringTime);
+        resp.sendRedirect(getServletContext().getContextPath() + String.format(ServerResources.POST_OF_AUTHOR_URL, postName, userDto.getLogin()));
     }
 }
