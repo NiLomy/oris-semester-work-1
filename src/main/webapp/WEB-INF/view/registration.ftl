@@ -205,7 +205,7 @@
                     let rememberMe = $("#remember-me").val();
 
                     $.post(
-                        "${pageContext}/registration", {
+                        "/registration", {
                             "name": name,
                             "lastname": lastname,
                             "email": email,
@@ -260,7 +260,7 @@
                                 $("#nickname-error").text("User with this nickname is already registered");
                                 $("#nickname").addClass("is-invalid");
                             } else {
-                                window.location.replace("${pageContext}/");
+                                window.location.replace("/");
                             }
                         }
                     )
@@ -323,7 +323,7 @@
                             </div>
                             <hr>
                             <div class="justify-content-lg-start">
-                                Already have account? <a href="${pageContext}/login">Sign in</a>
+                                Already have account? <a href="/login">Sign in</a>
                             </div>
                             <br>
                         </div>

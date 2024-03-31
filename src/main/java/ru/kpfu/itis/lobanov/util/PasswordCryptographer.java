@@ -1,13 +1,16 @@
 package ru.kpfu.itis.lobanov.util;
 
+import org.springframework.stereotype.Component;
+
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+@Component
 public class PasswordCryptographer {
     public static final String ENCRYPTING_ALGORITHM = "MD5";
 
-    public static String encrypt(String password) {
+    public String encrypt(String password) {
         MessageDigest md;
         try {
             md = MessageDigest.getInstance(ENCRYPTING_ALGORITHM);
@@ -19,5 +22,3 @@ public class PasswordCryptographer {
         }
     }
 }
-// check all inputs: selects, dropbox, et
-// сделкть хеширование в отдельном треде его стирать через какое-то время и сохранять в карту сущности хранящие объект и время его получения

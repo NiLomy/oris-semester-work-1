@@ -1,47 +1,49 @@
 package ru.kpfu.itis.lobanov.model.service.impl;
 
-import ru.kpfu.itis.lobanov.model.dao.MessageLikeDao;
-import ru.kpfu.itis.lobanov.model.dao.impl.MessageLikeDaoImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kpfu.itis.lobanov.model.entity.MessageLike;
+import ru.kpfu.itis.lobanov.model.repositories.MessageLikeRepository;
 import ru.kpfu.itis.lobanov.model.service.MessageLikeService;
 import ru.kpfu.itis.lobanov.util.dto.MessageLikeDto;
+import ru.kpfu.itis.lobanov.util.exception.MessageLikeNotFoundException;
 
+@Service
+@Transactional
+@RequiredArgsConstructor
 public class MessageLikeServiceImpl implements MessageLikeService {
-    private final MessageLikeDao messageLikeDao;
-
-    public MessageLikeServiceImpl(MessageLikeDao messageLikeDao) {
-        this.messageLikeDao = messageLikeDao;
-    }
+    private final MessageLikeRepository messageLikeRepository;
 
     @Override
     public MessageLikeDto get(int id) {
-        MessageLike messageLike = messageLikeDao.get(id);
+        MessageLike messageLike = messageLikeRepository.findById(id).orElseThrow(MessageLikeNotFoundException::new);
         return new MessageLikeDto(messageLike.getAuthor(), messageLike.getMessageId());
     }
 
     @Override
     public boolean isSet(String author, int messageId) {
-        MessageLike messageLike = messageLikeDao.get(author, messageId);
+        MessageLike messageLike = messageLikeRepository.findByAuthorAndMessageId(author, messageId);
         return messageLike != null;
     }
 
     @Override
     public int getAmountFromPost(int messageId) {
-        return messageLikeDao.getAllFromMessage(messageId).size();
+        return messageLikeRepository.findAllByMessageId(messageId).size();
     }
 
     @Override
     public int getAmount() {
-        return messageLikeDao.getAll().size();
+        return messageLikeRepository.findAll().size();
     }
 
     @Override
     public void save(MessageLike messageLike) {
-        messageLikeDao.save(messageLike);
+        messageLikeRepository.save(messageLike);
     }
 
     @Override
     public void remove(MessageLike messageLike) {
-        messageLikeDao.remove(messageLike);
+        messageLikeRepository.delete(messageLike);
     }
 }

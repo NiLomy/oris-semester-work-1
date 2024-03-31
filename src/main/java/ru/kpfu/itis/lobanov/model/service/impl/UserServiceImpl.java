@@ -1,228 +1,217 @@
 package ru.kpfu.itis.lobanov.model.service.impl;
 
 import com.cloudinary.Cloudinary;
-import ru.kpfu.itis.lobanov.model.dao.UserDao;
-import ru.kpfu.itis.lobanov.model.dao.impl.UserDaoImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.kpfu.itis.lobanov.model.entity.Role;
 import ru.kpfu.itis.lobanov.model.entity.User;
+import ru.kpfu.itis.lobanov.model.repositories.RoleRepository;
+import ru.kpfu.itis.lobanov.model.repositories.UserRepository;
 import ru.kpfu.itis.lobanov.model.service.UserService;
-import ru.kpfu.itis.lobanov.util.CloudinaryUtil;
 import ru.kpfu.itis.lobanov.util.PasswordCryptographer;
 import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
-import ru.kpfu.itis.lobanov.util.exception.DbException;
+import ru.kpfu.itis.lobanov.util.exception.UserNotFoundException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
+@Transactional
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserDao userDao;
-    private final Cloudinary cloudinary = CloudinaryUtil.getInstance();
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final Cloudinary cloudinary;
+    private final PasswordCryptographer passwordCryptographer;
+    private final PasswordEncoder passwordEncoder;
     public static final String REQUEST_TYPE_FILE = "file";
     public static final String CLOUDINARY_URL_KEY = "url";
 
-    public UserServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
-    }
-
     @Override
     public UserDto get(int id) {
-        User user = userDao.get(id);
-        if (user == null) return null;
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getImageUrl(), user.getAboutMe());
     }
 
     @Override
     public UserDto get(String nickname) {
-        User user = userDao.get(nickname);
+        User user = userRepository.findByLogin(nickname);
         if (user == null) return null;
         return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getImageUrl(), user.getAboutMe());
     }
 
     @Override
     public UserDto get(String login, String password) {
-        User user = userDao.get(login, PasswordCryptographer.encrypt(password));
+        User user = userRepository.findByLoginAndPassword(login, passwordCryptographer.encrypt(password));
+        if (user == null) return null;
+        return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getPassword(), user.getImageUrl(), user.getAboutMe());
+    }
+
+    @Override
+    public UserDto getByEmailAndPassword(String email, String password) {
+        User user = userRepository.findByEmailAndPassword(email, passwordCryptographer.encrypt(password));
         if (user == null) return null;
         return new UserDto(user.getName(), user.getLastname(), user.getLogin(), user.getEmail(), user.getPassword(), user.getImageUrl(), user.getAboutMe());
     }
 
     @Override
     public List<UserDto> getAll() {
-        return userDao.getAll().stream().map(
+        return userRepository.findAll().stream().map(
                 u -> new UserDto(u.getName(), u.getLastname(), u.getLogin(), u.getEmail(), u.getAboutMe())
         ).collect(Collectors.toList());
     }
 
     @Override
     public String getEmail(String login, String password) {
-        return userDao.getEmail(login, password);
+        return userRepository.findEmailByLoginAndPassword(login, password);
     }
 
     @Override
-    public void save(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
-        String lastname = req.getParameter("lastname");
-        String email = req.getParameter("email");
-        String nickname = req.getParameter("nickname");
-        String password = req.getParameter("password");
-        String confirmPassword = req.getParameter("confirmPassword");
-        String isRemembered = req.getParameter("remember_me");
-
-        resp.setContentType("text/plain");
-
+    public UserDto save(String name, String lastname, String email, String nickname, String password, String confirmPassword, String isRemembered, HttpServletResponse resp) throws ServletException, IOException {
         if (name.trim().isEmpty()) {
             resp.getWriter().write("emptyName");
-            return;
+            return null;
         }
         if (name.trim().length() > 60) {
             resp.getWriter().write("longName");
-            return;
+            return null;
         }
         if (lastname.trim().isEmpty()) {
             resp.getWriter().write("emptyLastname");
-            return;
+            return null;
         }
         if (lastname.trim().length() > 60) {
             resp.getWriter().write("longLastname");
-            return;
+            return null;
         }
         if (email.isEmpty()) {
             resp.getWriter().write("emptyEmail");
-            return;
+            return null;
         }
         if (!email.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")) {
             resp.getWriter().write("invalidEmail");
-            return;
+            return null;
         }
         if (nickname.trim().isEmpty()) {
             resp.getWriter().write("emptyNickname");
-            return;
+            return null;
         }
         if (nickname.trim().length() < 5) {
             resp.getWriter().write("shortNickname");
-            return;
+            return null;
         }
         if (nickname.trim().length() > 60) {
             resp.getWriter().write("longNickname");
-            return;
+            return null;
         }
         if (password.isEmpty()) {
             resp.getWriter().write("emptyPassword");
-            return;
+            return null;
         }
         if (password.length() < 8) {
             resp.getWriter().write("shortPassword");
-            return;
+            return null;
         }
         if (!password.matches("^(?=.*?[a-z])(?=.*?[0-9]).{8,}$")) {
             resp.getWriter().write("weakPassword");
-            return;
+            return null;
         }
         if (!confirmPassword.equals(password)) {
             resp.getWriter().write("invalidConfirmPassword");
-            return;
+            return null;
         }
         if (!isEmailUnique(email)) {
             resp.getWriter().write("nonUniqueEmail");
-            return;
+            return null;
         }
         if (!isNicknameUnique(nickname)) {
             resp.getWriter().write("nonUniqueNickname");
-            return;
+            return null;
         }
 
+//        User user = new User(
+//                name, lastname, email, nickname, passwordCryptographer.encrypt(password), "https://res.cloudinary.com/dr96a1nqv/image/upload/v1697035213/bk1136u5xdt1d6orehlq.jpg", null
+//        );
         User user = new User(
-                name, lastname, email, nickname, PasswordCryptographer.encrypt(password), null
+                name, lastname, email, nickname, passwordEncoder.encode(password), "https://res.cloudinary.com/dr96a1nqv/image/upload/v1697035213/bk1136u5xdt1d6orehlq.jpg", null
         );
-        userDao.save(user);
+        userRepository.save(user);
+        User u = userRepository.findByLogin(nickname);
+        Role role = roleRepository.findByName("USER");
+        userRepository.setRoles(u.getId(), role.getId());
 
         UserDto currentUser = get(nickname);
-        HttpSession httpSession = req.getSession();
-        httpSession.setAttribute(ServerResources.CURRENT_USER, currentUser);
 
         if (isRemembered != null && isRemembered.equals(ServerResources.IS_REMEMBER_ME_PRESSED)) {
-            remember(currentUser, req, resp);
+            remember(currentUser, resp);
         }
+        return currentUser;
     }
 
     @Override
-    public void updateInfo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
-        String lastname = req.getParameter("lastname");
-        String nickname = req.getParameter("nickname");
-        String email = req.getParameter("email");
-        String aboutMe = req.getParameter("aboutMe");
-        String emptyAboutMe = req.getParameter("emptyAboutMe");
-
-        HttpSession httpSession = req.getSession();
-        UserDto currentUserDto = (UserDto) httpSession.getAttribute("currentUser");
-
+    public String updateInfo(String name, String lastname, String nickname, String email, String aboutMe, String emptyAboutMe, UserDto currentUserDto, HttpServletResponse resp) {
         if (name.trim().isEmpty()) {
-            resp.getWriter().write("emptyName");
-            return;
+            return "emptyName";
         }
         if (name.trim().length() > 60) {
-            resp.getWriter().write("longName");
-            return;
+            return "longName";
         }
         if (lastname.trim().isEmpty()) {
-            resp.getWriter().write("emptyLastname");
-            return;
+            return "emptyLastname";
         }
         if (lastname.trim().length() > 60) {
-            resp.getWriter().write("longLastname");
-            return;
+            return "longLastname";
         }
         if (nickname.trim().isEmpty()) {
-            resp.getWriter().write("emptyNickname");
-            return;
+            return "emptyNickname";
         }
         if (!nickname.equals(currentUserDto.getLogin())) {
             if (nickname.trim().length() < 5) {
-                resp.getWriter().write("shortNickname");
-                return;
+                return "shortNickname";
             }
             if (nickname.trim().length() > 60) {
-                resp.getWriter().write("longNickname");
-                return;
+                return "longNickname";
             }
             if (!isNicknameUnique(nickname)) {
-                resp.getWriter().write("nonUniqueNickname");
-                return;
+                return "nonUniqueNickname";
             }
         }
         if (email.isEmpty()) {
-            resp.getWriter().write("emptyEmail");
-            return;
+            return "emptyEmail";
         }
         if (!email.equals(currentUserDto.getEmail())) {
             if (!email.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")) {
-                resp.getWriter().write("invalidEmail");
-                return;
+                return "invalidEmail";
             }
             if (!isEmailUnique(email)) {
-                resp.getWriter().write("nonUniqueEmail");
-                return;
+                return "nonUniqueEmail";
             }
         }
         if (aboutMe == null && emptyAboutMe != null) {
             aboutMe = emptyAboutMe;
         }
 
-        User user = new User(name, lastname, email, nickname, aboutMe);
-
-        User currentUser = userDao.get(currentUserDto.getLogin());
-        userDao.update(user, currentUser.getId());
+        User currentUser = userRepository.findByLogin(currentUserDto.getLogin());
+        currentUser.setName(name);
+        currentUser.setLastname(lastname);
+        currentUser.setEmail(email);
+        currentUser.setLogin(nickname);
+        currentUser.setAboutMe(aboutMe);
+        userRepository.save(currentUser);
 
         UserDto userDto = get(currentUser.getId());
-        remember(userDto, req, resp);
-        httpSession.setAttribute("currentUser", userDto);
-        resp.getWriter().write("Your data was successfully changed!");
+        remember(userDto, resp);
+        return "Your data was successfully changed!";
     }
 
     @Override
@@ -246,7 +235,7 @@ public class UserServiceImpl implements UserService {
 
         HttpSession httpSession = req.getSession();
         UserDto currentUser = (UserDto) httpSession.getAttribute(ServerResources.CURRENT_USER);
-        userDao.updateImageUrl(currentUser.getLogin(), imageUrl);
+        userRepository.updateImageUrl(currentUser.getLogin(), imageUrl);
         UserDto userDto = get(currentUser.getLogin());
         httpSession.setAttribute(ServerResources.CURRENT_USER, userDto);
 
@@ -255,43 +244,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updatePassword(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String currentPassword = req.getParameter("currentPassword");
-        String newPassword = req.getParameter("newPassword");
-        String repeatPassword = req.getParameter("repeatPassword");
-
+    public String updatePassword(String currentPassword, String newPassword, String repeatPassword, UserDto currentUser) {
         if (!(currentPassword.isEmpty() && newPassword.isEmpty() && repeatPassword.isEmpty())) {
-            HttpSession httpSession = req.getSession();
-            UserDto currentUser = (UserDto) httpSession.getAttribute("currentUser");
-
             if (currentPassword.isEmpty()) {
-                resp.getWriter().write("emptyCurrentPassword");
-                return;
+                return "emptyCurrentPassword";
             }
             if (!isPasswordMatches(currentUser.getLogin(), currentPassword)) {
-                resp.getWriter().write("invalidPassword");
-                return;
+                return "invalidPassword";
             }
             if (newPassword.isEmpty()) {
-                resp.getWriter().write("emptyNewPassword");
-                return;
+                return "emptyNewPassword";
             }
             if (newPassword.length() < 8) {
-                resp.getWriter().write("shortPassword");
-                return;
+                return "shortPassword";
             }
             if (!newPassword.matches("^(?=.*?[a-z])(?=.*?[0-9]).{8,}$")) {
-                resp.getWriter().write("weakPassword");
-                return;
+                return "weakPassword";
             }
             if (!repeatPassword.equals(newPassword)) {
-                resp.getWriter().write("invalidConfirmPassword");
-                return;
+                return "invalidConfirmPassword";
             }
 
-            userDao.updatePassword(currentUser.getLogin(), PasswordCryptographer.encrypt(newPassword));
-            resp.getWriter().write("Your password was successfully changed!");
+            userRepository.updatePassword(currentUser.getLogin(), passwordCryptographer.encrypt(newPassword));
+            return "Your password was successfully changed!";
         }
+        return "empty";
     }
 
     @Override
@@ -306,12 +283,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isPasswordMatches(String nickname, String password) {
-        User user = userDao.get(nickname);
-        return user.getPassword().equals(PasswordCryptographer.encrypt(password));
+        User user = userRepository.findByLogin(nickname);
+        return user.getPassword().equals(passwordCryptographer.encrypt(password));
     }
 
     @Override
-    public void remember(UserDto user, HttpServletRequest req, HttpServletResponse resp) {
+    public void remember(UserDto user, HttpServletResponse resp) {
         Cookie cookie = new Cookie("user", user.getLogin());
         cookie.setMaxAge(24 * 3_600);
         resp.addCookie(cookie);

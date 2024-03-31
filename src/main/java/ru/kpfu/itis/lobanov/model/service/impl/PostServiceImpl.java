@@ -1,21 +1,22 @@
 package ru.kpfu.itis.lobanov.model.service.impl;
 
-import ru.kpfu.itis.lobanov.model.dao.PostDao;
-import ru.kpfu.itis.lobanov.model.dao.UserDao;
-import ru.kpfu.itis.lobanov.model.dao.impl.PostDaoImpl;
-import ru.kpfu.itis.lobanov.model.dao.impl.UserDaoImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kpfu.itis.lobanov.model.entity.Post;
 import ru.kpfu.itis.lobanov.model.entity.PostLike;
 import ru.kpfu.itis.lobanov.model.entity.User;
+import ru.kpfu.itis.lobanov.model.repositories.PostRepository;
+import ru.kpfu.itis.lobanov.model.repositories.UserRepository;
 import ru.kpfu.itis.lobanov.model.service.PostLikeService;
 import ru.kpfu.itis.lobanov.model.service.PostService;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
+import ru.kpfu.itis.lobanov.util.exception.PostNotFoundException;
+import ru.kpfu.itis.lobanov.util.exception.UserNotFoundException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
@@ -23,22 +24,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
+@Transactional
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
-    private final PostDao postDao;
-    private final UserDao userDao;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
     private final PostLikeService postLikeService;
-
-    public PostServiceImpl(PostDao postDao, UserDao userDao, PostLikeService postLikeService) {
-        this.postDao = postDao;
-        this.userDao = userDao;
-        this.postLikeService = postLikeService;
-    }
 
     @Override
     public PostDto get(int id) {
-        Post post = postDao.get(id);
+        Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
         if (post == null) return null;
-        User user = userDao.get(post.getAuthorId());
+        User user = userRepository.findById(post.getAuthor().getId()).orElseThrow(UserNotFoundException::new);
         return new PostDto(
                 post.getName(),
                 post.getCategory(),
@@ -52,8 +50,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto get(String name, String author) {
-        User user = userDao.get(author);
-        Post post = postDao.get(name, user.getId());
+        User user = userRepository.findByLogin(author);
+        Post post = postRepository.findByNameAndAuthor(name, user);
         if (post == null) return null;
         return new PostDto(
                 post.getName(),
@@ -78,9 +76,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> getAll() {
-        return postDao.getAll().stream().map(
+        return postRepository.findAll().stream().map(
                 post -> {
-                    User user = userDao.get(post.getAuthorId());
+                    User user = userRepository.findById(post.getAuthor().getId()).orElseThrow(UserNotFoundException::new);
                     return new PostDto(
                             post.getName(),
                             post.getCategory(),
@@ -101,8 +99,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> getAllFromUser(String nickname) {
-        User currentUser = userDao.get(nickname);
-        return postDao.getAllFromUser(currentUser.getId()).stream().map(
+        User currentUser = userRepository.findByLogin(nickname);
+        return postRepository.findAllByAuthor(currentUser.getId()).stream().map(
                 post -> new PostDto(
                         post.getName(),
                         post.getCategory(),
@@ -117,33 +115,36 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> getAllFavouriteFromUser(String nickname) {
-        User currentUser = userDao.get(nickname);
-        return postDao.getAllFavouritesFromUser(currentUser.getId()).stream().map(
-                post -> {
-                    User user = userDao.get(post.getAuthorId());
-                    return new PostDto(
-                            post.getName(),
-                            post.getCategory(),
-                            post.getContent(),
-                            user.getLogin(),
-                            post.getDate(),
-                            post.getLikes(),
-                            user.getImageUrl());
-                }
-        ).sorted((o1, o2) -> o2.getDate().compareTo(o1.getDate())).collect(Collectors.toList());
+        User currentUser = userRepository.findByLogin(nickname);
+        return postRepository.findAllFavouritesByUser(currentUser.getId()).stream()
+                .map(postRepository::findById)
+                .map(
+                        optionalPost -> {
+                            Post post = optionalPost.orElseThrow(PostNotFoundException::new);
+                            User user = userRepository.findById(post.getAuthor().getId()).orElseThrow(UserNotFoundException::new);
+                            return new PostDto(
+                                    post.getName(),
+                                    post.getCategory(),
+                                    post.getContent(),
+                                    user.getLogin(),
+                                    post.getDate(),
+                                    post.getLikes(),
+                                    user.getImageUrl());
+                        }
+                ).sorted((o1, o2) -> o2.getDate().compareTo(o1.getDate())).collect(Collectors.toList());
     }
 
     @Override
     public void save(String postName, String postCategory, String postText, String userLogin) {
-        User user = userDao.get(userLogin);
+        User user = userRepository.findByLogin(userLogin);
         Timestamp date = getDate();
 
-        postDao.save(
+        postRepository.save(
                 new Post(
                         postName,
                         postCategory,
                         postText,
-                        user.getId(),
+                        user,
                         date,
                         0
                 )
@@ -151,37 +152,25 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void saveToFavourites(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession httpSession = req.getSession();
-        PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
-        UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
-
-        User currentUser = userDao.get(userDto.getLogin());
-        User author = userDao.get(postDto.getAuthor());
-        Post currentPost = postDao.get(postDto.getName(), author.getId());
-        postDao.saveToFavourites(currentUser.getId(), currentPost.getId());
+    public void saveToFavourites(PostDto postDto, UserDto userDto) {
+        User currentUser = userRepository.findByLogin(userDto.getLogin());
+        User author = userRepository.findByLogin(postDto.getAuthor());
+        Post currentPost = postRepository.findByNameAndAuthor(postDto.getName(), author);
+        postRepository.saveToFavourites(currentUser.getId(), currentPost.getId());
     }
 
     @Override
-    public void removeFromFavourites(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession httpSession = req.getSession();
-        PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
-        UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
-
-        User currentUser = userDao.get(userDto.getLogin());
-        User author = userDao.get(postDto.getAuthor());
-        Post currentPost = postDao.get(postDto.getName(), author.getId());
-        postDao.removeFromFavourites(currentUser.getId(), currentPost.getId());
+    public void removeFromFavourites(PostDto postDto, UserDto userDto) {
+        User currentUser = userRepository.findByLogin(userDto.getLogin());
+        User author = userRepository.findByLogin(postDto.getAuthor());
+        Post currentPost = postRepository.findByNameAndAuthor(postDto.getName(), author);
+        postRepository.removeFromFavourites(currentUser.getId(), currentPost.getId());
     }
 
     @Override
-    public void updateLikes(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession httpSession = req.getSession();
-        PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
-        UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
+    public PostDto updateLikes(PostDto postDto, UserDto userDto) {
         int likes = postDto.getLikes();
 
-        // вынести в сервлет и сделать отдальным методом у сервиса
         if (postLikeService.isSet(userDto.getLogin(), postDto.getName())) {
             postLikeService.remove(new PostLike(userDto.getLogin(), postDto.getName()));
             likes--;
@@ -189,12 +178,9 @@ public class PostServiceImpl implements PostService {
             postLikeService.save(new PostLike(userDto.getLogin(), postDto.getName()));
             likes++;
         }
-        postDao.updateLikes(postDto.getName(), likes);
+        postRepository.updateLikes(postDto.getName(), likes);
         postDto.setLikes(likes);
-        httpSession.setAttribute("currentPost", postDto);
-
-        resp.setContentType("text/plain");
-        resp.getWriter().write(String.valueOf(likes));
+        return postDto;
     }
 
     @Override

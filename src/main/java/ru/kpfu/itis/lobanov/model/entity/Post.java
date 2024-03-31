@@ -1,36 +1,38 @@
 package ru.kpfu.itis.lobanov.model.entity;
 
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-@Data
+@Entity
+@Table(name = "posts")
+@Getter
+@Setter
+@Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Post {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String name;
     private String category;
     private String content;
-    private int authorId;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private User author;
+    @Column(name = "add_date")
     private Timestamp date;
     private int likes;
 
-    public Post(@NonNull String name, @NonNull String category, @NonNull String content, int authorId, @NonNull Timestamp date, int likes) {
+    public Post(@NonNull String name, @NonNull String category, @NonNull String content, User author, @NonNull Timestamp date, int likes) {
         this.name = name;
         this.category = category;
         this.content = content;
-        this.authorId = authorId;
-        this.date = date;
-        this.likes = likes;
-    }
-
-    public Post(int id, @NonNull String name, @NonNull String category, @NonNull String content, int authorId, @NonNull Timestamp date, int likes) {
-        this.id = id;
-        this.name = name;
-        this.category = category;
-        this.content = content;
-        this.authorId = authorId;
+        this.author = author;
         this.date = date;
         this.likes = likes;
     }

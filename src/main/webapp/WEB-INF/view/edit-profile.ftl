@@ -16,7 +16,7 @@
                 $.ajax({
                     type: "POST",
                     enctype: 'multipart/form-data',
-                    url: "${pageContext}/edit-profile",
+                    url: "/edit-profile/photo",
                     data: data,
                     processData: false,
                     contentType: false,
@@ -243,7 +243,7 @@
                     let emptyAboutMe = $("#empty-about-me").val();
 
                     $.post(
-                        "${pageContext}/edit-profile", {
+                        "/edit-profile/info", {
                             "action": "updateInfo",
                             "nickname": nickname,
                             "name": name,
@@ -308,7 +308,7 @@
                     let repeatPassword = $("#new-password-repeat").val()
 
                     $.post(
-                        "${pageContext}/edit-profile", {
+                        "/edit-profile/password", {
                             "action": "changePassword",
                             "currentPassword": currentPassword,
                             "newPassword": newPassword,
@@ -334,7 +334,6 @@
                                 $("#new-password-repeat").addClass("is-invalid");
                             } else {
                                 alert("Your password was successfully changed!");
-
                             }
                         }
                     )

@@ -1,45 +1,42 @@
 package ru.kpfu.itis.lobanov.model.service.impl;
 
-import com.google.gson.Gson;
-import ru.kpfu.itis.lobanov.model.dao.MessageDao;
-import ru.kpfu.itis.lobanov.model.dao.UserDao;
-import ru.kpfu.itis.lobanov.model.dao.impl.MessageDaoImpl;
-import ru.kpfu.itis.lobanov.model.dao.impl.UserDaoImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kpfu.itis.lobanov.model.entity.Message;
 import ru.kpfu.itis.lobanov.model.entity.MessageLike;
 import ru.kpfu.itis.lobanov.model.entity.User;
+import ru.kpfu.itis.lobanov.model.repositories.MessageLikeRepository;
+import ru.kpfu.itis.lobanov.model.repositories.MessageRepository;
+import ru.kpfu.itis.lobanov.model.repositories.UserRepository;
 import ru.kpfu.itis.lobanov.model.service.MessageLikeService;
 import ru.kpfu.itis.lobanov.model.service.MessageService;
 import ru.kpfu.itis.lobanov.util.dto.MessageDto;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
+import ru.kpfu.itis.lobanov.util.exception.MessageLikeNotFoundException;
+import ru.kpfu.itis.lobanov.util.exception.MessageNotFoundException;
+import ru.kpfu.itis.lobanov.util.exception.UserNotFoundException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
+@Transactional
+@RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
-    public final MessageDao messageDao;
-    private final UserDao userDao;
+    public final UserRepository userRepository;
+    public final MessageRepository messageRepository;
+    private final MessageLikeRepository messageLikeRepository;
     private final MessageLikeService messageLikeService;
-
-    public MessageServiceImpl(MessageDao messageDao, UserDao userDao, MessageLikeService messageLikeService) {
-        this.messageDao = messageDao;
-        this.userDao = userDao;
-        this.messageLikeService = messageLikeService;
-    }
 
     @Override
     public MessageDto get(int id) {
-        Message message = messageDao.get(id);
+        Message message = messageRepository.findById(id).orElseThrow(MessageNotFoundException::new);
         if (message == null) return null;
-        User user = userDao.get(message.getAuthorId());
+        User user = userRepository.findById(message.getAuthorId()).orElseThrow(UserNotFoundException::new);
         return new MessageDto(
                 message.getId(),
                 user.getLogin(),
@@ -53,8 +50,8 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageDto get(String author, String content, String post, Timestamp date, int likes) {
-        User user = userDao.get(author);
-        Message message = messageDao.get(user.getId(), content, post, date, likes);
+        User user = userRepository.findByLogin(author);
+        Message message = messageRepository.findMessagesByAuthorIdAndContentAndPostAndDateAndLikes(user.getId(), content, post, date, likes);
         if (message == null) return null;
         return new MessageDto(
                 message.getId(),
@@ -69,17 +66,17 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<MessageDto> getAllFromPost(String post) {
-        return messageDao.getAllFromPost(post).stream().map(
+        return messageRepository.findAllByPost(post).stream().map(
                 message -> {
-                    User user = userDao.get(message.getAuthorId());
+                    User user = userRepository.findById(message.getAuthorId()).orElseThrow(UserNotFoundException::new);
                     return new MessageDto(
-                        message.getId(),
-                        user.getLogin(),
-                        message.getContent(),
-                        message.getPost(),
-                        message.getDate(),
-                        message.getLikes(),
-                        user.getImageUrl()
+                            message.getId(),
+                            user.getLogin(),
+                            message.getContent(),
+                            message.getPost(),
+                            message.getDate(),
+                            message.getLikes(),
+                            user.getImageUrl()
                     );
                 }
         ).collect(Collectors.toList());
@@ -87,75 +84,54 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<MessageDto> getAll() {
-        return messageDao.getAll().stream().map(
+        return messageRepository.findAll().stream().map(
                 message -> {
-                    User user = userDao.get(message.getAuthorId());
+                    User user = userRepository.findById(message.getAuthorId()).orElseThrow(UserNotFoundException::new);
                     return new MessageDto(
-                        message.getId(),
-                        user.getLogin(),
-                        message.getContent(),
-                        message.getPost(),
-                        message.getDate(),
-                        message.getLikes(),
-                        user.getImageUrl()
+                            message.getId(),
+                            user.getLogin(),
+                            message.getContent(),
+                            message.getPost(),
+                            message.getDate(),
+                            message.getLikes(),
+                            user.getImageUrl()
                     );
                 }
         ).collect(Collectors.toList());
     }
 
     @Override
-    public void save(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String newMessage = req.getParameter("newMessage");
+    public MessageDto save(String newMessage, PostDto postDto, UserDto userDto) {
         Timestamp date = getDate();
+        User user = userRepository.findByLogin(userDto.getLogin());
 
-        if (newMessage == null) {
-            resp.setContentType("text/plain");
-            resp.getWriter().write("You entered wrong data");
-        } else {
-            HttpSession httpSession = req.getSession();
-            PostDto postDto = (PostDto) httpSession.getAttribute("currentPost");
-            UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
-            UserDao userDao = new UserDaoImpl();
-            User user = userDao.get(userDto.getLogin());
-
-            messageDao.save(new Message(
-                    user.getId(), newMessage, postDto.getName(), date, 0
-            ));
-            MessageDto messageDto = get(user.getLogin(), newMessage, postDto.getName(), date, 0);
-            resp.setContentType("application/json");
-            String json = new Gson().toJson(messageDto);
-            json = json.replace("id", "messageID");
-            json = json.replace("content", "messageContent");
-            resp.getWriter().write(json);
-        }
+        messageRepository.save(new Message(
+                user.getId(), newMessage, postDto.getName(), date, 0
+        ));
+        return get(user.getLogin(), newMessage, postDto.getName(), date, 0);
     }
 
     @Override
-    public void updateLikes(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int messageId = Integer.parseInt(req.getParameter("messageId"));
+    public int updateLikes(int messageId, UserDto userDto) {
         MessageDto message = get(messageId);
-
-        HttpSession httpSession = req.getSession();
-        UserDto userDto = (UserDto) httpSession.getAttribute("currentUser");
         int likes = message.getLikes();
 
         if (messageLikeService.isSet(userDto.getLogin(), messageId)) {
-            messageLikeService.remove(new MessageLike(userDto.getLogin(), messageId));
+            messageLikeService.remove(messageLikeRepository.findByAuthorAndMessageId(userDto.getLogin(), messageId));
             likes--;
         } else {
             messageLikeService.save(new MessageLike(userDto.getLogin(), messageId));
             likes++;
         }
-        messageDao.updateLikes(messageId, likes);
+        messageRepository.updateLikes(messageId, likes);
         message.setLikes(likes);
 
-        resp.setContentType("text/plain");
-        resp.getWriter().write(String.valueOf(likes));
+        return likes;
     }
 
     @Override
     public UserDto getMostFrequentUser() {
-        User user = userDao.get(messageDao.getMostFrequentUserId());
+        User user = userRepository.findById(messageRepository.getMostFrequentUserId().get(0)).orElseThrow(UserNotFoundException::new);
         if (user == null) return null;
         return new UserDto(
                 user.getName(),

@@ -4,14 +4,14 @@
             <div class="row mt-5">
                 <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4 mt-3">
                     <h6 class="text-uppercase fw-bold mb-4" style="font-family:MV BOLI; font-size:200%;">
-                        <a href="${pageContext}" style="text-decoration: none; color: inherit">
+                        <a href="" style="text-decoration: none; color: inherit">
                             Religious studying
                         </a>
                     </h6>
                     <p>
                         Religious studying is a site where you can start your road in studying different
                         religions or to help others with their study... <a class="text-reset" style="color: #0b5ed7"
-                                                                           href="${pageContext}/about-us">Read more</a>
+                                                                           href="/about-us">Read more</a>
                     </p>
                 </div>
 
@@ -20,13 +20,13 @@
                         Help
                     </h6>
                     <p>
-                        <a href="${pageContext}/about-us" class="text-reset">About us</a>
+                        <a href="/about-us" class="text-reset">About us</a>
                     </p>
                     <p>
-                        <a href="${pageContext}/terms-conditions" class="text-reset">Terms & Conditions</a>
+                        <a href="/terms-conditions" class="text-reset">Terms & Conditions</a>
                     </p>
                     <p>
-                        <a href="${pageContext}/privacy-policy" class="text-reset">Privacy policy</a>
+                        <a href="/privacy-policy" class="text-reset">Privacy policy</a>
                     </p>
                 </div>
 
@@ -43,7 +43,7 @@
 
     <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
         © 2023 Copyright:
-        <a class="text-reset fw-bold" href="${pageContext}">Religious studying</a>
+        <a class="text-reset fw-bold" href="">Religious studying</a>
         All rights reserved
     </div>
 </footer>

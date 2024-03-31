@@ -1,13 +1,22 @@
 package ru.kpfu.itis.lobanov.model.entity;
 
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
 
-@Data
+@Entity
+@Table(name = "messages")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Message {
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    @Column(name = "author_id")
     private int authorId;
     private String content;
     private String post;
