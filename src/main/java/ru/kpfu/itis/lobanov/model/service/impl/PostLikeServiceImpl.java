@@ -29,16 +29,6 @@ public class PostLikeServiceImpl implements PostLikeService {
     }
 
     @Override
-    public int getAmountFromPost(String post) {
-        return postLikeRepository.findAllByPost(post).size();
-    }
-
-    @Override
-    public int getAmount() {
-        return postLikeRepository.findAll().size();
-    }
-
-    @Override
     public void save(PostLike postLike) {
         postLikeRepository.save(postLike);
     }

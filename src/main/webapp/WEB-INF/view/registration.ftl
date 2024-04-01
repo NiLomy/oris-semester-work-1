@@ -3,17 +3,6 @@
 <#macro scripts>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script>
-        $(function () {
-            $("#remember-me").change(function () {
-                let rememberMe = $("#remember-me");
-                if (rememberMe.val() === "off") {
-                    rememberMe.val("on");
-                } else {
-                    rememberMe.val("off");
-                }
-            });
-        });
-
         $(document).ready(function () {
 
             // Name validation
@@ -202,17 +191,15 @@
                     let nickname = $("#nickname").val();
                     let password = $("#password").val();
                     let confirmPassword = $("#confirm-password").val();
-                    let rememberMe = $("#remember-me").val();
 
                     $.post(
-                        "/registration", {
+                        "<@spring.url '/registration'/>", {
                             "name": name,
                             "lastname": lastname,
                             "email": email,
                             "nickname": nickname,
                             "password": password,
-                            "confirmPassword": confirmPassword,
-                            "rememberMe": rememberMe,
+                            "confirmPassword": confirmPassword
                         }, function (response) {
                             if (response === "emptyName") {
                                 $("#name-error").text("You should enter your name");
@@ -260,7 +247,7 @@
                                 $("#nickname-error").text("User with this nickname is already registered");
                                 $("#nickname").addClass("is-invalid");
                             } else {
-                                window.location.replace("/");
+                                window.location.replace("<@spring.url '/login'/>");
                             }
                         }
                     )
@@ -313,17 +300,13 @@
                                                                                              required>
                                 <p id="confirm-password-error" class="invalid-feedback d-block" role="alert"></p>
                                 <div style="text-align: center">
-                                    <input id="remember-me" class="form-check-input" type="checkbox" value="off"
-                                           name="remember_me">
-                                    <label class="form-check-label" for="remember_me">Remember me</label>
-                                    <br>
                                     <br>
                                     <input id="submit-button" class="form-control" type="submit" value="REGISTER"/>
                                 </div>
                             </div>
                             <hr>
                             <div class="justify-content-lg-start">
-                                Already have account? <a href="/login">Sign in</a>
+                                Already have account? <a href="<@spring.url '/login'/>">Sign in</a>
                             </div>
                             <br>
                         </div>

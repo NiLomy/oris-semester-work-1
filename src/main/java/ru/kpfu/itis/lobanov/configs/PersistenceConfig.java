@@ -14,24 +14,24 @@ import org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcesso
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 
 @Configuration
-@PropertySource("classpath:persistence.properties")
-@EnableJpaRepositories("ru.kpfu.itis.lobanov.model.repositories")
+@PropertySource(ServerResources.PERSISTENCE_PROPERTIES_PATH)
+@EnableJpaRepositories(ServerResources.REPOSITORIES_PACKAGE)
 public class PersistenceConfig implements EnvironmentAware {
     private Environment environment;
 
     @Bean
     public DataSource dataSource() throws PropertyVetoException {
-        String driver = environment.getProperty("jdbc.driver");
-        String url = environment.getProperty("jdbc.url");
-        String user = environment.getProperty("jdbc.user");
-        String password = environment.getProperty("jdbc.password");
-
+        String driver = environment.getProperty(ServerResources.JDBC_DRIVER);
+        String url = environment.getProperty(ServerResources.JDBC_URL);
+        String user = environment.getProperty(ServerResources.JDBC_USER);
+        String password = environment.getProperty(ServerResources.JDBC_PASSWORD);
 
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         dataSource.setDriverClass(driver);
@@ -45,15 +45,15 @@ public class PersistenceConfig implements EnvironmentAware {
     @Bean
     public EntityManagerFactory entityManagerFactory() throws PropertyVetoException {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaVendorAdapter.setDatabase(Database.valueOf(environment.getProperty("database")));
-        jpaVendorAdapter.setShowSql(environment.getProperty("jdbc.show-sql", Boolean.class));
+        jpaVendorAdapter.setDatabase(Database.valueOf(environment.getProperty(ServerResources.DATABASE)));
+        jpaVendorAdapter.setShowSql(environment.getProperty(ServerResources.JDBC_SHOW_SQL, Boolean.class));
         jpaVendorAdapter.setGenerateDdl(true);
-        jpaVendorAdapter.setDatabasePlatform(environment.getProperty("hibernate.dialect"));
+        jpaVendorAdapter.setDatabasePlatform(environment.getProperty(ServerResources.HIBERNATE_DIALECT));
 
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter);
         entityManagerFactory.setDataSource(dataSource());
-        entityManagerFactory.setPackagesToScan("ru.kpfu.itis.lobanov.model");
+        entityManagerFactory.setPackagesToScan(ServerResources.MODEL_PACKAGE);
         entityManagerFactory.afterPropertiesSet();
 
         return entityManagerFactory.getObject();
@@ -74,7 +74,7 @@ public class PersistenceConfig implements EnvironmentAware {
         this.environment = environment;
     }
 
-    @Bean(name = "transactionManager")
+    @Bean(name = ServerResources.TRANSACTION_MANAGER)
     public PlatformTransactionManager dbTransactionManager() throws PropertyVetoException {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(

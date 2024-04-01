@@ -91,7 +91,7 @@
                     let postText = $("#post-text").val();
 
                     $.post(
-                        "/create-post", {
+                        "<@spring.url '/create-post'/>", {
                             "postName": postName,
                             "postCategory": postCategory,
                             "postText": postText
@@ -115,7 +115,7 @@
                                 $("#post-name-error").text("You already have such post. Please write about something else");
                                 $("#post-name").addClass("is-invalid");
                             } else {
-                                window.location.replace("/post?postName=" + postName + "&postAuthor=" + "${currentUser.login}");
+                                window.location.replace(<@spring.url '/'/> + "post?postName=" + postName + "&postAuthor=" + "${currentUser.login}");
                             }
                         }
                     )

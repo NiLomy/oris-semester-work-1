@@ -64,7 +64,7 @@
                                     <div class="row d-flex justify-content-center">
                                         <div class="col-md-12 col-lg-10 col-xl-8">
                                             <div class="card"
-                                                 href="/post?postName=${p.name}&postAuthor=${p.author}">
+                                                 href="<@spring.url '/post?postName=${p.name}&postAuthor=${p.author}'/>">
                                                 <div class="card-body p-4">
                                                     <div class="d-flex flex-start">
                                                         <img class="rounded-circle shadow-1-strong me-3"
@@ -73,7 +73,7 @@
                                                         <div class="flex-grow-1 flex-shrink-1">
                                                             <div>
                                                                 <div class="d-flex justify-content-between align-items-center">
-                                                                    <a href="/post?postName=${p.name}&postAuthor=${p.author}">
+                                                                    <a href="<@spring.url '/post?postName=${p.name}&postAuthor=${p.author}'/>">
                                                                         <p class="post-name">
                                                                             ${p.name}
                                                                         </p>

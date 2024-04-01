@@ -123,7 +123,7 @@
         </div>
         <div class="col-2 mt-3">
             <#if currentUser? has_content>
-                <a class="btn btn-primary me-1 flex-grow-1" href="/create-post">
+                <a class="btn btn-primary me-1 flex-grow-1" href="<@spring.url '/create-post'/>">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Create new post
                 </a>
             <#else>
@@ -142,7 +142,7 @@
                 <div id="nothing-found" style="display: none">
                     <p>No results found</p>
                     <#if currentUser? has_content>
-                        <a class="btn btn-primary me-1 flex-grow-1" href="/create-post">
+                        <a class="btn btn-primary me-1 flex-grow-1" href="<@spring.url '/create-post'/>">
                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Create new post about this
                         </a>
                     <#else>
@@ -155,11 +155,11 @@
                     <div class="container my-1 py-1 a-post">
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-12 col-lg-10 col-xl-8">
-                                <div class="card" href="/post?postName=${p.name}&postAuthor=${p.author}">
+                                <div class="card" href="<@spring.url '/post?postName=${p.name}&postAuthor=${p.author}'/>">
                                     <div class="card-body p-4">
                                         <div class="d-flex flex-start">
                                             <a style="text-decoration: none; color: inherit"
-                                               href="/another-profile?anotherUser=${p.author}">
+                                               href="<@spring.url '/another-profile?anotherUser=${p.author}'/>">
                                                 <img class="rounded-circle shadow-1-strong me-3"
                                                      src="${p.authorImageUrl}" alt="avatar" width="65"
                                                      height="65"/>
@@ -167,7 +167,7 @@
                                             <div class="flex-grow-1 flex-shrink-1">
                                                 <div>
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <a href="/post?postName=${p.name}&postAuthor=${p.author}"
+                                                        <a href="<@spring.url '/post?postName=${p.name}&postAuthor=${p.author}'/>"
                                                            style="text-decoration: none; color: inherit">
                                                             <p class="post-name">
                                                                 <b>${p.name}</b>
@@ -180,7 +180,7 @@
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <p class="mb-1">
                                                             <a style="text-decoration: none; color: inherit"
-                                                               href="/another-profile?anotherUser=${p.author}">${p.author}</a>
+                                                               href="<@spring.url '/another-profile?anotherUser=${p.author}'/>">${p.author}</a>
                                                             <span class="small">- ${p.date}</span>
                                                         </p>
                                                     </div>

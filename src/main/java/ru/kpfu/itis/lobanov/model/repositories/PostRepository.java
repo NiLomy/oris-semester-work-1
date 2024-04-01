@@ -18,7 +18,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Post findByNameAndAuthor(String name, User author);
 
     @Modifying
-//    @Query("select p from Post p where p.author.id = :userId")
     @Query(value = "select * from posts where author_id = :userId", nativeQuery = true)
     List<Post> findAllByAuthor(@Param("userId") Integer userId);
 

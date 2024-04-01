@@ -26,7 +26,7 @@
                     </p>
                     <p style="text-indent: 30px">
                         Posts on topics can be found here:
-                        <a class="btn btn-primary" style="font-size: small; text-indent: 0" href="/posts">
+                        <a class="btn btn-primary" style="font-size: small; text-indent: 0" href="<@spring.url '/posts'/>">
                             <i class="fa fa-list-ul" aria-hidden="true"></i> Posts
                         </a>
                     </p>
@@ -50,7 +50,7 @@
                                                 <div class="flex-grow-1 flex-shrink-1">
                                                     <div>
                                                         <div class="d-flex justify-content-between align-items-center">
-                                                            <a href="/post?postName=${mostPopularPost.name}&postAuthor=${mostPopularPost.author}"
+                                                            <a href="<@spring.url '/post?postName=${mostPopularPost.name}&postAuthor=${mostPopularPost.author}'/>"
                                                                style="text-decoration: none; color: inherit">
                                                                 <p class="post-name">
                                                                     <b>${mostPopularPost.name}</b>
@@ -96,7 +96,7 @@
                                                 <div class="d-flex text-black">
                                                     <div class="flex-shrink-0">
                                                         <a style="text-decoration: none; color: inherit"
-                                                           href="/another-profile?anotherUser=${mostActiveUser.login}">
+                                                           href="<@spring.url '/another-profile?anotherUser=${mostActiveUser.login}'/>">
                                                             <img src="${mostActiveUser.imageUrl}"
                                                                  alt="Profile image" class="img-fluid"
                                                                  style="width: 120px; border-radius: 10px;">
@@ -104,7 +104,7 @@
                                                     </div>
                                                     <div class="flex-grow-1 ms-3 mt-4">
                                                         <h5 class="mb-1"><a
-                                                                    href="/another-profile?anotherUser=${mostActiveUser.login}"
+                                                                    href="<@spring.url '/another-profile?anotherUser=${mostActiveUser.login}'/>"
                                                                     style="text-decoration: none; color: inherit">${mostActiveUser.login}</a>
                                                         </h5>
                                                     </div>

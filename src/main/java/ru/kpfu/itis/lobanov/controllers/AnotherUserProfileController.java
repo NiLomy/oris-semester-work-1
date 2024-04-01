@@ -1,4 +1,4 @@
-package ru.kpfu.itis.lobanov.controller.controllers;
+package ru.kpfu.itis.lobanov.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -25,8 +25,6 @@ public class AnotherUserProfileController {
     public String getAnotherUserProfilePage(@RequestParam(ServerResources.ANOTHER_USER) String nickname, Model model) {
         UserDto anotherUserDto = userService.get(nickname);
         model.addAttribute(ServerResources.ANOTHER_USER, anotherUserDto);
-//        HttpSession httpSession = req.getSession();
-//        UserDto currentUserDto = (UserDto) httpSession.getAttribute(ServerResources.CURRENT_USER);
         UserDto currentUserDto = (UserDto) model.getAttribute(ServerResources.CURRENT_USER);
 
         List<PostDto> posts = postService.getAllFromUser(nickname);

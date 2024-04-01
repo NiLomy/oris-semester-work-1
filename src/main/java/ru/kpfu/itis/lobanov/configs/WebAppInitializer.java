@@ -3,6 +3,7 @@ package ru.kpfu.itis.lobanov.configs;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 
 import javax.servlet.Filter;
 
@@ -11,7 +12,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected String[] getServletMappings() {
-        return new String[]{"/"};
+        return new String[]{ServerResources.HOME_URL};
     }
 
     @Override
@@ -35,7 +36,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     @Override
     protected Filter[] getServletFilters() {
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
-        encodingFilter.setEncoding("UTF-8");
+        encodingFilter.setEncoding(ServerResources.ENCODING);
         encodingFilter.setForceEncoding(true);
         return new Filter[]{encodingFilter};
     }

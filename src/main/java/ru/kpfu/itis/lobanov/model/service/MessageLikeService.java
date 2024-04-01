@@ -5,9 +5,10 @@ import ru.kpfu.itis.lobanov.util.dto.MessageLikeDto;
 
 public interface MessageLikeService {
     MessageLikeDto get(int id);
+
     boolean isSet(String author, int messageId);
-    int getAmountFromPost(int messageId);
-    int getAmount();
+
     void save(MessageLike messageLike);
+
     void remove(MessageLike messageLike);
 }

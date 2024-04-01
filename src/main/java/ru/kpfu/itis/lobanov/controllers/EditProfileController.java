@@ -1,33 +1,20 @@
-package ru.kpfu.itis.lobanov.controller.controllers;
+package ru.kpfu.itis.lobanov.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.kpfu.itis.lobanov.model.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.lobanov.model.service.UserService;
-import ru.kpfu.itis.lobanov.model.service.impl.UserServiceImpl;
 import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-// TODO fix img
 @Controller
 @RequestMapping(ServerResources.EDIT_PROFILE_URL)
 @SessionAttributes(ServerResources.CURRENT_USER)
 @RequiredArgsConstructor
-@MultipartConfig(
-        maxFileSize = ServerResources.MAX_FILE_SIZE,
-        maxRequestSize = ServerResources.MAX_REQUEST_SIZE
-)
 public class EditProfileController {
     private final UserService userService;
 
@@ -36,35 +23,39 @@ public class EditProfileController {
         return ServerResources.EDIT_PROFILE_PAGE;
     }
 
-    @PostMapping("/photo")
-    public void editProfile(
+    @PostMapping(ServerResources.PHOTO_URL)
+    @ResponseBody
+    public String editProfile(
+            @RequestParam(ServerResources.FILE) MultipartFile image,
             @ModelAttribute(ServerResources.CURRENT_USER) UserDto currentUser,
-            HttpServletRequest req,
-            HttpServletResponse resp
-    ) throws ServletException, IOException {
-        userService.updateImageUrl(req, resp);
+            Model model
+    ) throws IOException {
+        String imgUrl = userService.updateImageUrl(image, currentUser);
+        UserDto userDto = userService.get(currentUser.getLogin());
+        model.addAttribute(ServerResources.CURRENT_USER, userDto);
+        return imgUrl;
     }
 
-    @PostMapping("/info")
+    @PostMapping(ServerResources.INFO_URL)
     @ResponseBody
     public String editInfo(
+            @RequestParam(ServerResources.NICKNAME) String nickname,
             @RequestParam(ServerResources.NAME) String name,
             @RequestParam(ServerResources.LASTNAME) String lastname,
             @RequestParam(ServerResources.EMAIL) String email,
-            @RequestParam(ServerResources.NICKNAME) String nickname,
             @RequestParam(ServerResources.ABOUT_ME) String aboutMe,
-            @RequestParam(ServerResources.EMPTY_ABOUT_ME) String emptyAboutMe,
             @ModelAttribute(ServerResources.CURRENT_USER) UserDto currentUser,
-            Model model,
-            HttpServletResponse resp
+            Model model
     ) {
-        String message = userService.updateInfo(name, lastname, nickname, email, aboutMe, emptyAboutMe, currentUser, resp);
-        UserDto userDto = userService.get(currentUser.getLogin());
+        String response = userService.checkUpdateInfoForm(name, lastname, nickname, email, aboutMe, currentUser);
+        if (response != null) return response;
+
+        UserDto userDto = userService.updateInfo(name, lastname, nickname, email, aboutMe, currentUser);
         model.addAttribute(ServerResources.CURRENT_USER, userDto);
-        return message;
+        return ServerResources.SUCCESS_RESPONSE;
     }
 
-    @PostMapping("/password")
+    @PostMapping(ServerResources.PASSWORD_URL)
     @ResponseBody
     public String editPassword(
             @RequestParam(ServerResources.CURRENT_PASSWORD) String currentPassword,
@@ -72,6 +63,10 @@ public class EditProfileController {
             @RequestParam(ServerResources.REPEAT_PASSWORD) String repeatPassword,
             @ModelAttribute(ServerResources.CURRENT_USER) UserDto currentUser
     ) {
-        return userService.updatePassword(currentPassword, newPassword, repeatPassword, currentUser);
+        String response = userService.checkUpdatePasswordForm(currentPassword, newPassword, repeatPassword, currentUser);
+        if (response != null) return response;
+
+        userService.updatePassword(currentPassword, newPassword, repeatPassword, currentUser);
+        return ServerResources.SUCCESS_RESPONSE;
     }
 }

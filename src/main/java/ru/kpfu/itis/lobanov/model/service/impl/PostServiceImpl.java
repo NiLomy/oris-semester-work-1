@@ -10,14 +10,12 @@ import ru.kpfu.itis.lobanov.model.repositories.PostRepository;
 import ru.kpfu.itis.lobanov.model.repositories.UserRepository;
 import ru.kpfu.itis.lobanov.model.service.PostLikeService;
 import ru.kpfu.itis.lobanov.model.service.PostService;
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 import ru.kpfu.itis.lobanov.util.exception.PostNotFoundException;
 import ru.kpfu.itis.lobanov.util.exception.UserNotFoundException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
@@ -190,35 +188,34 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public boolean isPostValid(String postName, String postCategory, String postText, HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setContentType("text/plain");
+    public boolean isPostFavourite(List<PostDto> favouritePosts, String postName) {
+        return favouritePosts.stream().anyMatch(post -> post.getName().equals(postName));
+    }
+
+    @Override
+    public String checkForValid(String postName, String postCategory, String postText) {
         if (postName.isEmpty()) {
-            resp.getWriter().write("emptyPostName");
-            return false;
+            return ServerResources.EMPTY_POST_NAME;
         }
-        if (postName.length() < 5) {
-            resp.getWriter().write("shortPostName");
-            return false;
+        if (postName.length() < ServerResources.POST_NAME_MIN_LENGTH) {
+            return ServerResources.SHORT_POST_NAME;
         }
-        if (postName.length() > 100) {
-            resp.getWriter().write("longPostName");
-            return false;
+        if (postName.length() > ServerResources.POST_NAME_MAX_LENGTH) {
+            return ServerResources.LONG_POST_NAME;
         }
         if (postCategory.isEmpty()) {
-            resp.getWriter().write("emptyPostCategory");
-            return false;
+            return ServerResources.EMPTY_POST_CATEGORY;
         }
         if (postText.isEmpty()) {
-            resp.getWriter().write("emptyPostText");
-            return false;
+            return ServerResources.EMPTY_POST_TEXT;
         }
 
-        return true;
+        return null;
     }
 
     private Timestamp getDate() {
-        String[] dateInput = ZonedDateTime.now().toString().split("T");
-        String[] timeInput = dateInput[1].split("\\.");
+        String[] dateInput = ZonedDateTime.now().toString().split(ServerResources.TIME_CHAR);
+        String[] timeInput = dateInput[1].split(ServerResources.DOT_CHAT);
         String stringDate = dateInput[0];
         String stringTime = timeInput[0];
 

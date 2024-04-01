@@ -7,46 +7,13 @@
 
     <session-config>
         <cookie-config>
-            <name>SESSION</name>
+            <name>SESSIONID</name>
         </cookie-config>
     </session-config>
 
-<!--    <filter>-->
-<!--        <filter-name>springSecurityFilterChain</filter-name>-->
-<!--        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>-->
-<!--    </filter>-->
-
-<!--    <filter-mapping>-->
-<!--        <filter-name>springSecurityFilterChain</filter-name>-->
-<!--        <url-pattern>/*</url-pattern>-->
-<!--    </filter-mapping>-->
-
-<!--    <servlet>-->
-<!--        <servlet-name>freemarker</servlet-name>-->
-<!--        <servlet-class>freemarker.ext.servlet.FreemarkerServlet</servlet-class>-->
-
-<!--        <init-param>-->
-<!--            <param-name>TemplatePath</param-name>-->
-<!--            <param-value>/</param-value>-->
-<!--        </init-param>-->
-
-<!--        <init-param>-->
-<!--            <param-name>ContentType</param-name>-->
-<!--            <param-value>text/html; charset=utf-8</param-value>-->
-<!--        </init-param>-->
-<!--    </servlet>-->
-
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>freemarker</servlet-name>-->
-<!--        <url-pattern>*.ftl</url-pattern>-->
-<!--    </servlet-mapping>-->
-
-<!--    <error-page>-->
-<!--        <location>/handle</location>-->
-<!--    </error-page>-->
-
     <error-page>
         <error-code>404</error-code>
-        <location>/WEB-INF/view/errors/pageNotFound.ftl</location>
+        <location>/WEB-INF/view/pageNotFound.ftl</location>
     </error-page>
+
 </web-app>

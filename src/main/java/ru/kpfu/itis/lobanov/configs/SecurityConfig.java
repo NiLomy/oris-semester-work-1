@@ -10,39 +10,58 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.kpfu.itis.lobanov.security.AuthProvider;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import ru.kpfu.itis.lobanov.util.constants.ServerResources;
+import ru.kpfu.itis.lobanov.util.handlers.ResponseAuthenticationHandler;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@ComponentScan("ru.kpfu.itis.lobanov.security")
+@ComponentScan(ServerResources.SECURITY_PACKAGE)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final AuthProvider authProvider;
     private final DaoAuthenticationProvider provider;
+    private final DataSource dataSource;
+    private final UserDetailsService userDetailsService;
+    private final ResponseAuthenticationHandler authenticationHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/profile", "/favourite", "/create-post", "/edit-profile", "/about-us").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers(
+                        ServerResources.PROFILE_URL,
+                        ServerResources.FAVOURITE_URL,
+                        ServerResources.CREATE_POST_URL,
+                        ServerResources.EDIT_PROFILE_URL
+                ).hasAnyAuthority(
+                        ServerResources.USER_AUTHORITY,
+                        ServerResources.ADMIN_AUTHORITY
+                )
                 .anyRequest().permitAll();
 
-        http
+        http.csrf().disable()
                 .formLogin()
-                .loginPage("/test")
-                .usernameParameter("login")
-                .passwordParameter("password")
-                .defaultSuccessUrl(ServerResources.ABOUT_US_URL, true)
-                .failureUrl("/test?error=true")
+                .loginPage(ServerResources.LOGIN_URL)
+                .usernameParameter(ServerResources.LOGIN)
+                .passwordParameter(ServerResources.PASSWORD)
+                .defaultSuccessUrl(ServerResources.HOME_URL, true)
+                .failureUrl(ServerResources.LOGIN_FAILED_URL)
+                .failureHandler(authenticationHandler)
                 .and()
                 .logout()
                 .invalidateHttpSession(true)
-                .deleteCookies(ServerResources.CURRENT_USER, "SESSIONID")
                 .clearAuthentication(true)
-                .logoutSuccessUrl("/test")
+                .deleteCookies(ServerResources.CURRENT_USER, ServerResources.SESSION_ID_KEY)
+                .logoutRequestMatcher(new AntPathRequestMatcher(ServerResources.LOGOUT_URL, ServerResources.GET_METHOD))
+                .logoutSuccessUrl(ServerResources.LOGIN_URL)
+                .and()
+                .rememberMe()
+                .userDetailsService(userDetailsService)
+                .tokenRepository(persistentTokenRepository())
+                .rememberMeParameter(ServerResources.REMEMBER_ME)
                 .and()
                 .exceptionHandling();
     }
@@ -50,5 +69,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(provider);
+    }
+
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        return jdbcTokenRepository;
     }
 }

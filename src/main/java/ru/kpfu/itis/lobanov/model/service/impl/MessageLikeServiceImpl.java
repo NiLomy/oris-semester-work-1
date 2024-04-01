@@ -28,16 +28,6 @@ public class MessageLikeServiceImpl implements MessageLikeService {
     }
 
     @Override
-    public int getAmountFromPost(int messageId) {
-        return messageLikeRepository.findAllByMessageId(messageId).size();
-    }
-
-    @Override
-    public int getAmount() {
-        return messageLikeRepository.findAll().size();
-    }
-
-    @Override
     public void save(MessageLike messageLike) {
         messageLikeRepository.save(messageLike);
     }

@@ -11,15 +11,16 @@ import ru.kpfu.itis.lobanov.model.repositories.MessageRepository;
 import ru.kpfu.itis.lobanov.model.repositories.UserRepository;
 import ru.kpfu.itis.lobanov.model.service.MessageLikeService;
 import ru.kpfu.itis.lobanov.model.service.MessageService;
+import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 import ru.kpfu.itis.lobanov.util.dto.MessageDto;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
-import ru.kpfu.itis.lobanov.util.exception.MessageLikeNotFoundException;
 import ru.kpfu.itis.lobanov.util.exception.MessageNotFoundException;
 import ru.kpfu.itis.lobanov.util.exception.UserNotFoundException;
 
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,7 +80,7 @@ public class MessageServiceImpl implements MessageService {
                             user.getImageUrl()
                     );
                 }
-        ).collect(Collectors.toList());
+        ).sorted(Comparator.comparing(MessageDto::getDate)).collect(Collectors.toList());
     }
 
     @Override
@@ -144,8 +145,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     private Timestamp getDate() {
-        String[] dateInput = ZonedDateTime.now().toString().split("T");
-        String[] timeInput = dateInput[1].split("\\.");
+        String[] dateInput = ZonedDateTime.now().toString().split(ServerResources.TIME_CHAR);
+        String[] timeInput = dateInput[1].split(ServerResources.DOT_CHAT);
         String stringDate = dateInput[0];
         String stringTime = timeInput[0];
 

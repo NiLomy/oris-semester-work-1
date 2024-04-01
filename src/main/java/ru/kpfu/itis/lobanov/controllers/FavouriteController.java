@@ -1,4 +1,4 @@
-package ru.kpfu.itis.lobanov.controller.controllers;
+package ru.kpfu.itis.lobanov.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,16 +15,16 @@ import ru.kpfu.itis.lobanov.util.dto.UserDto;
 import java.util.List;
 
 @Controller
-@RequestMapping(ServerResources.PROFILE_URL)
+@RequestMapping(ServerResources.FAVOURITE_URL)
 @SessionAttributes(ServerResources.CURRENT_USER)
 @RequiredArgsConstructor
-public class ProfileController {
+public class FavouriteController {
     private final PostService postService;
 
     @GetMapping
-    public String getProfilePage(Model model, @ModelAttribute(ServerResources.CURRENT_USER) UserDto userDto) {
-        List<PostDto> posts = postService.getAllFromUser(userDto.getLogin());
-        model.addAttribute(ServerResources.CURRENT_USER_POSTS, posts);
-        return ServerResources.PROFILE_PAGE;
+    public String getFavouritePage(Model model, @ModelAttribute(ServerResources.CURRENT_USER) UserDto userDto) {
+        List<PostDto> posts = postService.getAllFavouriteFromUser(userDto.getLogin());
+        model.addAttribute(ServerResources.FAVOURITE_POSTS, posts);
+        return ServerResources.FAVOURITE_PAGE;
     }
 }

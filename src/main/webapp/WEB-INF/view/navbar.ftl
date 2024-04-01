@@ -3,7 +3,7 @@
 
         <div class="d-flex me-2 mb-1">
             <div style="font-family:MV BOLI; font-size:200%;" class="me-2">
-                <a href="/" style="text-decoration: none; color: inherit">
+                <a href="<@spring.url '/'/>" style="text-decoration: none; color: inherit">
                     Religious studying
                 </a>
             </div>
@@ -11,10 +11,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
+                        <a class="nav-link" href="<@spring.url '/'/>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/posts">Posts</a>
+                        <a class="nav-link" href="<@spring.url '/posts'/>">Posts</a>
                     </li>
                 </ul>
             </div>
@@ -35,21 +35,21 @@
                         </div>
                         <ul id="navbar-dropdown" class="dropdown-menu dropdown-menu-end"
                             aria-labelledby="dropdownProfileImage">
-                            <li style="--delay: 1;"><a class="dropdown-item" href="/profile">My
+                            <li style="--delay: 1;"><a class="dropdown-item" href="<@spring.url '/profile'/>">My
                                     profile</a></li>
                             <li style="--delay: 1;"><a class="dropdown-item"
-                                                       href="/favourite">Favourite</a></li>
-                            <li style="--delay: 3"><a class="dropdown-item" href="/logout">Logout</a></li>
+                                                       href="<@spring.url '/favourite'/>">Favourite</a></li>
+                            <li style="--delay: 3"><a class="dropdown-item" href="<@spring.url '/logout'/>">Logout</a></li>
                         </ul>
                     </div>
                 <#else>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent2">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             <li class="nav-item">
-                                <a class="nav-link" href="/registration">Register</a>
+                                <a class="nav-link" href="<@spring.url '/registration'/>">Register</a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn btn-primary me-1 flex-grow-1" href="/login">Log in</a>
+                                <a class="btn btn-primary me-1 flex-grow-1" href="<@spring.url '/login'/>">Log in</a>
                             </li>
                         </ul>
                     </div>

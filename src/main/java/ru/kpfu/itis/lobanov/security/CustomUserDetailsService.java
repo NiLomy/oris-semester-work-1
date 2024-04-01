@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.kpfu.itis.lobanov.model.entity.User;
 import ru.kpfu.itis.lobanov.model.repositories.UserRepository;
 
-@Service("customService")
+@Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;

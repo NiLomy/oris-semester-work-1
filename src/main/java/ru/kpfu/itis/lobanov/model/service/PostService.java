@@ -3,10 +3,6 @@ package ru.kpfu.itis.lobanov.model.service;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 public interface PostService {
@@ -32,5 +28,7 @@ public interface PostService {
 
     boolean isPostUnique(String author, String postName);
 
-    boolean isPostValid(String postName, String postCategory, String postText, HttpServletRequest req, HttpServletResponse resp) throws IOException;
+    boolean isPostFavourite(List<PostDto> favouritePosts, String postName);
+
+    String checkForValid(String postName, String postCategory, String postText);
 }

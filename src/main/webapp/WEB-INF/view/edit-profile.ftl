@@ -16,7 +16,7 @@
                 $.ajax({
                     type: "POST",
                     enctype: 'multipart/form-data',
-                    url: "/edit-profile/photo",
+                    url: "<@spring.url '/edit-profile/photo'/>",
                     data: data,
                     processData: false,
                     contentType: false,
@@ -240,17 +240,14 @@
                     let lastname = $("#lastname").val();
                     let email = $("#email").val();
                     let aboutMe = $("#about-me").val();
-                    let emptyAboutMe = $("#empty-about-me").val();
 
                     $.post(
-                        "/edit-profile/info", {
-                            "action": "updateInfo",
+                        "<@spring.url '/edit-profile/info'/>", {
                             "nickname": nickname,
                             "name": name,
                             "lastname": lastname,
                             "email": email,
-                            "aboutMe": aboutMe,
-                            "emptyAboutMe": emptyAboutMe
+                            "aboutMe": aboutMe
                         }, function (response) {
                             if (response === "emptyName") {
                                 $("#name-error").text("You should enter your name");
@@ -308,8 +305,7 @@
                     let repeatPassword = $("#new-password-repeat").val()
 
                     $.post(
-                        "/edit-profile/password", {
-                            "action": "changePassword",
+                        "<@spring.url '/edit-profile/password'/>", {
                             "currentPassword": currentPassword,
                             "newPassword": newPassword,
                             "repeatPassword": repeatPassword
@@ -421,8 +417,8 @@
                                                                     id="about-me" class="form-control" type="text"
                                                                     name="about-me" value="${currentUser.aboutMe}">
                                                             <#else>
-                                                                <label for="empty-about-me">About me: </label><input
-                                                                    id="empty-about-me" class="form-control" type="text"
+                                                                <label for="about-me">About me: </label><input
+                                                                    id="about-me" class="form-control" type="text"
                                                                     name="about-me">
                                                             </#if>
                                                             <br>

@@ -1,4 +1,4 @@
-package ru.kpfu.itis.lobanov.controller.controllers;
+package ru.kpfu.itis.lobanov.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -11,25 +11,22 @@ import ru.kpfu.itis.lobanov.model.service.PostService;
 import ru.kpfu.itis.lobanov.util.constants.ServerResources;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
+import ru.kpfu.itis.lobanov.util.exception.CloudinaryConfigException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.List;
 
 @Controller
-@RequestMapping(ServerResources.FAVOURITE_URL)
+@RequestMapping(ServerResources.PROFILE_URL)
 @SessionAttributes(ServerResources.CURRENT_USER)
 @RequiredArgsConstructor
-public class FavouriteController {
+public class ProfileController {
     private final PostService postService;
 
     @GetMapping
-    public String getFavouritePage(Model model, @ModelAttribute(ServerResources.CURRENT_USER) UserDto userDto) {
-        List<PostDto> posts = postService.getAllFavouriteFromUser(userDto.getLogin());
-        model.addAttribute(ServerResources.FAVOURITE_POSTS, posts);
-        return ServerResources.FAVOURITE_PAGE;
+    public String getProfilePage(Model model, @ModelAttribute(ServerResources.CURRENT_USER) UserDto userDto) throws CloudinaryConfigException {
+        throw new CloudinaryConfigException("AAAA");
+//        List<PostDto> posts = postService.getAllFromUser(userDto.getLogin());
+//        model.addAttribute(ServerResources.CURRENT_USER_POSTS, posts);
+//        return ServerResources.PROFILE_PAGE;
     }
 }

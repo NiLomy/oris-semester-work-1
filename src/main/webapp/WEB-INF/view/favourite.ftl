@@ -126,7 +126,7 @@
             <section class="gradient-custom all-posts">
                 <div id="nothing-found" style="display: none">
                     <p>No results found</p>
-                    <a class="btn btn-primary me-1 flex-grow-1" href="/posts">
+                    <a class="btn btn-primary me-1 flex-grow-1" href="<@spring.url '/posts'/>">
                         <i class="fa fa-list-ul" aria-hidden="true"></i> Search for interesting posts
                     </a>
                 </div>
@@ -138,7 +138,7 @@
                                     <div class="card-body p-4">
                                         <div class="d-flex flex-start">
                                             <a style="text-decoration: none; color: inherit"
-                                               href="/another-profile?anotherUser=${p.author}">
+                                               href="<@spring.url '/another-profile?anotherUser=${p.author}'/>">
                                                 <img class="rounded-circle shadow-1-strong me-3"
                                                      src="${p.authorImageUrl}" alt="avatar" width="65"
                                                      height="65"/>
@@ -146,7 +146,7 @@
                                             <div class="flex-grow-1 flex-shrink-1">
                                                 <div>
                                                     <div class="d-flex justify-content-between align-items-center">
-                                                        <a href="/post?postName=${p.name}&postAuthor=${p.author}"
+                                                        <a href="<@spring.url '/post?postName=${p.name}&postAuthor=${p.author}'/>"
                                                            style="text-decoration: none; color: inherit">
                                                             <p class="post-name">
                                                                 <b>${p.name}</b>
@@ -180,7 +180,7 @@
         <#else>
             <div id="nothing">
                 <p>You have no favourite posts</p>
-                <a class="btn btn-primary me-1 flex-grow-1" href="/posts">
+                <a class="btn btn-primary me-1 flex-grow-1" href="<@spring.url '/posts'/>">
                     <i class="fa fa-list-ul" aria-hidden="true"></i> Search for interesting posts
                 </a>
             </div>

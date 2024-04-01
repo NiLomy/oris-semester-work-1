@@ -1,4 +1,4 @@
-package ru.kpfu.itis.lobanov.controller.controllers;
+package ru.kpfu.itis.lobanov.controllers;
 
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +12,6 @@ import ru.kpfu.itis.lobanov.util.dto.MessageDto;
 import ru.kpfu.itis.lobanov.util.dto.PostDto;
 import ru.kpfu.itis.lobanov.util.dto.UserDto;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -32,27 +29,26 @@ public class PostController {
             Model model
     ) {
         PostDto postDto = postService.get(postName, postAuthor);
+        model.addAttribute(ServerResources.CURRENT_POST, postDto);
 
         List<MessageDto> messages = messageService.getAllFromPost(postName);
-        messages.sort(Comparator.comparing(MessageDto::getDate));
         model.addAttribute(ServerResources.MESSAGES, messages);
 
         Object currentUser = model.getAttribute(ServerResources.CURRENT_USER);
 
         if (currentUser != null) {
             List<PostDto> posts = postService.getAllFavouriteFromUser(((UserDto) currentUser).getLogin());
-            boolean isFavourite = posts.stream().anyMatch(post -> post.getName().equals(postName));
+            boolean isFavourite = postService.isPostFavourite(posts, postName);
 
             if (isFavourite) {
                 model.addAttribute(ServerResources.IS_FAVOURITE, true);
             }
         }
 
-        model.addAttribute(ServerResources.CURRENT_POST, postDto);
         return ServerResources.POST_PAGE;
     }
 
-    @PostMapping("/send-message")
+    @PostMapping(ServerResources.SEND_MESSAGE_URL)
     @ResponseBody
     public String sendMessage(
             @RequestParam(ServerResources.NEW_MESSAGE) String newMessage,
@@ -60,16 +56,16 @@ public class PostController {
             @ModelAttribute(ServerResources.CURRENT_USER) UserDto userDto
     ) {
         if (newMessage == null) {
-            return "You entered wrong data";
+            return ServerResources.ENTERED_WRONG_DATA;
         }
         MessageDto messageDto = messageService.save(newMessage, postDto, userDto);
         String json = new Gson().toJson(messageDto);
-        json = json.replace("id", "messageID");
-        json = json.replace("content", "messageContent");
+        json = json.replace(ServerResources.ID, ServerResources.MESSAGE_ID);
+        json = json.replace(ServerResources.CONTENT, ServerResources.MESSAGE_CONTENT);
         return json;
     }
 
-    @PostMapping("press-like")
+    @PostMapping(ServerResources.PRESS_LIKE_URL)
     @ResponseBody
     public String pressLike(
             @ModelAttribute(ServerResources.CURRENT_POST) PostDto postDto,
@@ -81,7 +77,7 @@ public class PostController {
         return String.valueOf(postDto1.getLikes());
     }
 
-    @PostMapping("press-message-like")
+    @PostMapping(ServerResources.PRESS_MESSAGE_LIKE_URL)
     @ResponseBody
     public String pressMessageLike(
             @RequestParam(ServerResources.MESSAGE_ID) String messageId,
@@ -92,7 +88,7 @@ public class PostController {
         return String.valueOf(likes);
     }
 
-    @PostMapping("press-favourite")
+    @PostMapping(ServerResources.PRESS_FAVOURITE_URL)
     public void pressFavourite(
             @ModelAttribute(ServerResources.CURRENT_POST) PostDto postDto,
             @ModelAttribute(ServerResources.CURRENT_USER) UserDto userDto
@@ -100,7 +96,7 @@ public class PostController {
         postService.saveToFavourites(postDto, userDto);
     }
 
-    @PostMapping("press-unfavourite")
+    @PostMapping(ServerResources.PRESS_UNFAVOURITE_URL)
     public void pressUnfavourite(
             @ModelAttribute(ServerResources.CURRENT_POST) PostDto postDto,
             @ModelAttribute(ServerResources.CURRENT_USER) UserDto userDto

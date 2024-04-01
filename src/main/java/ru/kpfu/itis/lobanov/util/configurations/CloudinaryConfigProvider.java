@@ -16,7 +16,8 @@ public class CloudinaryConfigProvider extends ConfigProvider {
     public static final int PROVIDED_ARGUMENTS_COUNT = 3;
 
     public void writeData(String... data) throws CloudinaryConfigException {
-        if (data.length != PROVIDED_ARGUMENTS_COUNT) throw new CloudinaryConfigException(String.format(LogMessages.ILLEGAL_ARGUMENTS_COUNT_DB_CONFIG_EXCEPTION, PROVIDED_ARGUMENTS_COUNT, data.length));
+        if (data.length != PROVIDED_ARGUMENTS_COUNT)
+            throw new CloudinaryConfigException(String.format(LogMessages.ILLEGAL_ARGUMENTS_COUNT_DB_CONFIG_EXCEPTION, PROVIDED_ARGUMENTS_COUNT, data.length));
 
         try (OutputStream output = Files.newOutputStream(Paths.get(PROPERTY_FILE_PATH + PROPERTY_FILE_NAME))) {
             Properties prop = new Properties();

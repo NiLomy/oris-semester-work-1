@@ -7,7 +7,7 @@
             "click", "#like-button", function () {
 
                 $.post(
-                    "/post/press-like", {
+                    "<@spring.url '/post/press-like'/>", {
                     }, function (response) {
                         $("#post-like-value").text(response);
                     }
@@ -26,7 +26,7 @@
                 const messageId = $(this).data("message-id");
 
                 $.post(
-                    "/post/press-message-like", {
+                    "<@spring.url '/post/press-message-like'/>", {
                         "messageId": messageId
                     }, function (response) {
                         $("#message-like-value-" + messageId).text(response);
@@ -50,14 +50,14 @@
             "click", "#unfavourite", function () {
                 if (unfavouriteClickCount % 2 === 0) {
                     $.post(
-                        "/post/press-unfavourite", {
+                        "<@spring.url '/post/press-unfavourite'/>", {
                         }, function (response) {
                             $("#unfavourite").html('<i class="fa fa-bookmark" aria-hidden="true"></i> Mark favourite');
                         }
                     )
                 } else {
                     $.post(
-                        "/post/press-favourite", {
+                        "<@spring.url '/post/press-favourite'/>", {
                         }, function (response) {
                             $("#unfavourite").html('<i class="fa fa-bookmark-o" aria-hidden="true"></i> Remove from favourites');
                         }
@@ -73,14 +73,14 @@
                 let clickCount = 0;
                 if (favouriteClickCount % 2 === 0) {
                     $.post(
-                        "/post/press-favourite", {
+                        "<@spring.url '/post/press-favourite'/>", {
                         }, function (response) {
                             $("#favourite").html('<i class="fa fa-bookmark-o" aria-hidden="true"></i> Remove from favourites');
                         }
                     )
                 } else {
                     $.post(
-                        "/post/press-unfavourite", {
+                        "<@spring.url '/post/press-unfavourite'/>", {
                         }, function (response) {
                             $("#favourite").html('<i class="fa fa-bookmark" aria-hidden="true"></i> Mark favourite');
                         }
@@ -95,12 +95,12 @@
                 let newMessage = $("#new-message").val();
                 if (newMessage !== null && newMessage.trim() !== "") {
                     $.post(
-                        "/post/send-message", {
+                        "<@spring.url '/post/send-message'/>", {
                             "newMessage": newMessage
                         }, function (response) {
                             response = JSON.parse(response);
                             $("#messages").append(
-                                '<section class="gradient-custom"><div class="container my-1 py-1"><div class="row d-flex justify-content-center"><div class="col-md-12 col-lg-10 col-xl-8"><div class="card message-card" style="border: 1px solid"><div class="card-body p-4"><div class="d-flex flex-start"><a style="text-decoration: none; color: inherit" href="/profile"> <img class="rounded-circle shadow-1-strong me-3"src="' + response.authorImgUrl + '" alt="avatar" width="65"height="65" /></a><div class="flex-grow-1 flex-shrink-1"><div class="d-flex justify-content-between align-items-center"><a style="text-decoration: none; color: inherit" href="/profile"><p class="mb-1">' + response.author + '</p></a><div><span class="small">' + response.date + '</span></div></div><div class="d-flex justify-content-between text-wrap"><p id="user-message" class="small mb-0 message text-break text-justify m-1" style="color: #000;">' + response.messageContent + '</p></div><div class="small d-flex justify-content-start"><div class="d-flex align-items-center me-3"><p id="message-like-' + response.messageID + '" class="mb-0"> <span id="message-like-value-' + response.messageID + '">' + response.likes + '</span> <a id="message-like-button-' + response.messageID + '" class="message-like-button" style="cursor: pointer; text-decoration: none; color: inherit"  data-message-id="' + response.messageID + '"><i class="far fa-thumbs-up me-2"></i></a></p></div></div></div></div></div></div></div></div></div></section>'
+                                '<section class="gradient-custom"><div class="container my-1 py-1"><div class="row d-flex justify-content-center"><div class="col-md-12 col-lg-10 col-xl-8"><div class="card message-card" style="border: 1px solid"><div class="card-body p-4"><div class="d-flex flex-start"><a style="text-decoration: none; color: inherit" href="<@spring.url '/profile'/>"> <img class="rounded-circle shadow-1-strong me-3"src="' + response.authorImgUrl + '" alt="avatar" width="65"height="65" /></a><div class="flex-grow-1 flex-shrink-1"><div class="d-flex justify-content-between align-items-center"><a style="text-decoration: none; color: inherit" href="<@spring.url '/profile'/>"><p class="mb-1">' + response.author + '</p></a><div><span class="small">' + response.date + '</span></div></div><div class="d-flex justify-content-between text-wrap"><p id="user-message" class="small mb-0 message text-break text-justify m-1" style="color: #000;">' + response.messageContent + '</p></div><div class="small d-flex justify-content-start"><div class="d-flex align-items-center me-3"><p id="message-like-' + response.messageId + '" class="mb-0"> <span id="message-like-value-' + response.messageId + '">' + response.likes + '</span> <a id="message-like-button-' + response.messageId + '" class="message-like-button" style="cursor: pointer; text-decoration: none; color: inherit"  data-message-id="' + response.messageId + '"><i class="far fa-thumbs-up me-2"></i></a></p></div></div></div></div></div></div></div></div></div></section>'
                             )
                             $("#new-message").val('');
                         }
@@ -137,14 +137,14 @@
                         <div class="card-body">
                             <div class="d-flex flex-start align-items-center">
                                 <a style="text-decoration: none; color: inherit"
-                                   href="/another-profile?anotherUser=${currentPost.author}">
+                                   href="<@spring.url '/another-profile?anotherUser=${currentPost.author}'/>">
                                     <img class="rounded-circle shadow-1-strong me-3"
                                          src="${currentPost.authorImageUrl}" alt="avatar" width="60"
                                          height="60"/>
                                 </a>
                                 <div>
                                     <a style="text-decoration: none; color: inherit"
-                                       href="/another-profile?anotherUser=${currentPost.author}">
+                                       href="<@spring.url '/another-profile?anotherUser=${currentPost.author}'/>">
                                         <h6 class="fw-bold text-primary mb-1 me-5">${currentPost.author}</h6>
                                     </a>
                                 </div>
@@ -212,7 +212,7 @@
                                         <div class="card-body p-4">
                                             <div class="d-flex flex-start">
                                                 <a style="text-decoration: none; color: inherit"
-                                                   href="/another-profile?anotherUser=${message.author}">
+                                                   href="<@spring.url '/another-profile?anotherUser=${message.author}'/>">
                                                     <img class="rounded-circle shadow-1-strong me-3"
                                                          src="${message.authorImgUrl}" alt="avatar" width="65"
                                                          height="65"/>
@@ -220,7 +220,7 @@
                                                 <div class="flex-grow-1 flex-shrink-1">
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <a style="text-decoration: none; color: inherit"
-                                                           href="/another-profile?anotherUser=${message.author}">
+                                                           href="<@spring.url '/another-profile?anotherUser=${message.author}'/>">
                                                             <p class="mb-1">
                                                                 ${message.author}
                                                             </p>

@@ -1,6 +1,7 @@
 package ru.kpfu.itis.lobanov.security;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
+@Getter
 public class CustomUserDetails implements UserDetails {
     private User user;
 
@@ -24,11 +26,13 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
+        if (user == null) return null;
         return user.getPassword();
     }
 
     @Override
     public String getUsername() {
+        if (user == null) return null;
         return user.getLogin();
     }
 
