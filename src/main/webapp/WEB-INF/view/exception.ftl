@@ -13,13 +13,15 @@
     <div style="font-size:150%; text-align:center">
         <h1>exception details:</h1>
         <br>
-        <#if uri?has_content>
+        <#if statusCode?has_content>
             <strong>Request uri:</strong>${uri}<br>
             <strong>Status code:</strong>${statusCode}<br>
             <#if message??><strong>Message: </strong>${message}<br></#if>
         <#else>
             <#if simpleMessage?has_content>
                 <strong>Message: </strong>${simpleMessage}
+            <#else>
+                <strong>There was an error =(</strong>
             </#if>
         </#if>
     </div>
